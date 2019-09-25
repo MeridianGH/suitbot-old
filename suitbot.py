@@ -18,12 +18,14 @@ async def ping(ctx):
 
 
 @bot.command(name='schäm_dich')
-@commands.has_permissions(move_members=True)
+# @commands.has_permissions(move_members=True)
 async def schaem_dich(ctx):
     old_channel = ctx.message.author.voice.channel
     new_channel = discord.utils.find(lambda x: x.name == 'Schäm-Dich-Ecke', ctx.message.channel.guild.channels)
     user = ctx.message.mentions[0]
     response = f'Schäm dich, {user.mention}!'
+    dm = await user.create_dm()
+    await dm.send(content=response)
     await user.move_to(new_channel, reason=f'Schäm dich, {user}!')
     await ctx.send(response)
     time.sleep(5.0)
@@ -32,7 +34,7 @@ async def schaem_dich(ctx):
 
 
 @bot.command(name='move')
-@commands.has_permissions(move_members=True)
+# @commands.has_permissions(move_members=True)
 async def move(ctx):
     print(ctx.message.content)
     channel_text = ctx.message.content[ctx.message.content.find('>')+2:]
