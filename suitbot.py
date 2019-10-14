@@ -4,6 +4,7 @@ import time
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
+from modules.utils import *
 # from discord.voice_client import VoiceClient
 
 
@@ -29,95 +30,109 @@ async def on_ready():
 class General(commands.Cog):
     """All general commands.
     """
+    def __init__(self):
+        bot.help_command.cog = self
+
     @commands.command(name='ping')
     async def ping(self, ctx):
         """Sends the current response time in ms.
+        Parameters:  None
+        Permissions: None
         This will display the elapsed time between a heartbeat and an acknowledged heartbeat.
         """
         await ctx.send(str(round(bot.latency * 1000)) + 'ms')
 
 
-general = General()
-discord.ext.commands.HelpCommand.cog = general
-bot.add_cog(general)
+bot.add_cog(General())
 
 
 class Users(commands.Cog):
     """All user related commands.
     """
     @commands.command(name='move')
-    # @commands.has_permissions(move_members=True)
     async def move(self, ctx):
         """Moves all mentioned users to the specified channel.
-        Parameters: [Users]: Mention all users like this: @User
-                    [Channel] (optional): Exact channel name. The user(s) will be moved to this channel.
+        Parameters:  [Users]: Mention all users like this: @User
+                     [Channel] (optional): Exact channel name. The user(s) will be moved to this channel.
                                           If no channel name has been specified, all users will be disconnected.
+        Permissions: Move Members
         """
-        args = ctx.message.content.split()[1:]
-        for index, arg in enumerate(args):
-            if len(arg) < 2:
-                args[index-1:index+1] = [' '.join(args[index-1:index+1])]
-        channel_text = args[1]
-        channel = discord.utils.find(lambda x: x.name == channel_text, ctx.message.channel.guild.channels)
+        if ctx.message.author.guild_permissions.move_members:
+            args = arg_parse(ctx)
+            channel_text = args[-1]
+            channel = discord.utils.find(lambda x: x.name == channel_text, ctx.message.channel.guild.channels)
 
-        user_list = []
-        for user in ctx.message.mentions:
-            await user.move_to(channel)
-            user_list.append(user.name)
-        user_list_string = ', '.join(user_list)
+            user_list = []
+            for user in ctx.message.mentions:
+                await user.move_to(channel)
+                user_list.append(user.name)
+            user_list_string = ', '.join(user_list)
 
-        if channel is None:
-            if len(user_list) == 1:
-                response = f'{user_list_string} has been sent to oblivion.'
+            if channel is None:
+                if len(user_list) == 1:
+                    response = f'{user_list_string} has been sent to oblivion.'
+                else:
+                    response = f'({user_list_string}) have been sent to oblivion.'
             else:
-                response = f'({user_list_string}) have been sent to oblivion.'
+                if len(user_list) == 1:
+                    response = f'Moved {user_list_string} to {channel}.'
+                else:
+                    response = f'Moved ({user_list_string}) to {channel}.'
         else:
-            if len(user_list) == 1:
-                response = f'Moved {user_list_string} to {channel}.'
-            else:
-                response = f'Moved ({user_list_string}) to {channel}.'
+            response = 'You do not have the permissions to do this.'
+
         await ctx.send(response)
         print(response)
 
     @commands.command(name='move_all')
-    # @commands.has_permissions(move_members=True)
     async def move_all(self, ctx):
         """Moves all users in a channel to another channel.
-        Parameters: [Channel1]: Exact channel name. The channel the users are currently connected to.
-                    [Channel2] (optional): Exact channel name. The user(s) will be moved to this channel.
+        Parameters:  [Channel1]: Exact channel name. The channel the users are currently connected to.
+                     [Channel2] (optional): Exact channel name. The user(s) will be moved to this channel.
                                            If no channel name has been specified, all users will be disconnected.
+        Permissions: Move Members
         """
-        args = ctx.message.content.split()[1:]
-        for index, arg in enumerate(args):
-            if len(arg) < 2:
-                args[index-1:index+1] = [' '.join(args[index-1:index+1])]
-        channel1 = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
-        channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+        if ctx.message.author.guild_permissions.move_members:
+            args = arg_parse(ctx)
+            channel1 = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
+            channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
 
-        user_list = []
-        for user in channel1.members:
-            await user.move_to(channel2)
-            user_list.append(user.name)
-        user_list_string = ', '.join(user_list)
+            user_list = []
+            for user in channel1.members:
+                await user.move_to(channel2)
+                user_list.append(user.name)
+            user_list_string = ', '.join(user_list)
 
-        if channel2 is None:
-            if len(user_list) == 1:
-                response = f'{user_list_string} has been sent to oblivion.'
+            if channel2 is None:
+                if len(user_list) == 1:
+                    response = f'{user_list_string} has been sent to oblivion.'
+                else:
+                    response = f'({user_list_string}) have been sent to oblivion.'
             else:
-                response = f'({user_list_string}) have been sent to oblivion.'
+                if len(user_list) == 1:
+                    response = f'Moved {user_list_string} from {channel1} to {channel2}.'
+                else:
+                    response = f'Moved ({user_list_string}) from {channel1} to {channel2}.'
         else:
-            if len(user_list) == 1:
-                response = f'Moved {user_list_string} from {channel1} to {channel2}.'
-            else:
-                response = f'Moved ({user_list_string}) from {channel1} to {channel2}.'
+            response = 'You do not have the permissions to do this.'
+
         await ctx.send(response)
         print(response)
 
+    @commands.command(name='move_all_guild')
+    async def move_all_guild(self, ctx):
+        args = arg_parse(ctx)
+        channel = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
+
+        for ch in ctx.message.channel.guild.voice_channels:
+            for user in ch.members:
+                await user.move_to(channel)
+
     @commands.command(name='shame_on_you')
-    # @commands.has_permissions(move_members=True)
     async def shame_on_you(self, ctx):
         """Moves the mentioned user out of the channel for five seconds.
-        Parameters: [Users]: Mention all users like this: @User
+        Parameters:  [Users]: Mention all users like this: @User
+        Permissions: Move Members
 
         The user will be moved to a different channel and moved back after five seconds.
         He should contemplate his life choices.
@@ -146,8 +161,9 @@ class Users(commands.Cog):
     @commands.command(name='say_sike')
     async def say_sike(self, ctx):
         """Sends an embed with the famous piranha plant.
-        Parameters: [User] (optional): Will send the image in a private conversation. If not specified, will send
+        Parameters:  [User] (optional): Will send the image in a private conversation. If not specified, will send
                                        it to the channel where the command has been invoked.
+        Permissions: None
         """
         embed = discord.Embed()
         embed.set_image(url='https://i.kym-cdn.com/entries/icons/original/000/030/414/plant.jpg')
