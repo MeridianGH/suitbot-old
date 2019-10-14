@@ -42,6 +42,18 @@ class General(commands.Cog):
         """
         await ctx.send(str(round(bot.latency * 1000)) + 'ms')
 
+    @commands.command(name='clear')
+    async def clear(self, ctx):
+        """Deletes a given amount of messages in the current channel.
+        Parameters:  [Amount]: The number of messages to delete.
+        Permissions: None
+        """
+        args = arg_parse(ctx)
+        if len(args) == 0:
+            args[0] = 10
+        deleted = await ctx.message.channel.purge(limit=int(args[0]+1))
+        await ctx.message.channel.send('Deleted {} message(s)'.format(len(deleted)))
+
 
 bot.add_cog(General())
 
