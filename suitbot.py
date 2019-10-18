@@ -2,7 +2,6 @@ import os
 import sys
 from dotenv import load_dotenv
 from discord.ext import commands
-# from discord.voice_client import VoiceClient
 
 
 def resource_path(relative_path):
@@ -14,7 +13,7 @@ def resource_path(relative_path):
 load_dotenv(dotenv_path=resource_path('./venv/.env'))
 token = os.getenv('DISCORD_TOKEN')
 
-startup_extensions = ['commands.general', 'commands.users', 'commands.stuff']
+startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'errors.error_handling']
 bot = commands.Bot(command_prefix='-')
 
 
@@ -22,6 +21,13 @@ bot = commands.Bot(command_prefix='-')
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     print('Close this window to stop the bot.')
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    owner = bot.get_user(360817252158930954)
+    await ctx.send(f'Something has went wrong! Please contact the owner and specify your issue: {owner.mention}')
+    print(error)
 
 
 if __name__ == '__main__':

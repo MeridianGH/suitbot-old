@@ -1,4 +1,3 @@
-from discord.ext import commands
 from modules.utils import *
 
 
@@ -31,7 +30,7 @@ class General(commands.Cog):
         if len(args) == 0:
             args = [10]
         deleted = await ctx.message.channel.purge(limit=int(args[0]))
-        message = await ctx.message.channel.send('Deleted {} message(s)'.format(len(deleted)))
+        message = await ctx.send('Deleted {} message(s)'.format(len(deleted)))
         await message.delete(delay=5)
 
 

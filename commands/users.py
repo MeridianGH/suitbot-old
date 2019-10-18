@@ -1,12 +1,14 @@
-from discord.ext import commands
 from modules.utils import *
-import time
+import modules.checks as checks
 import discord
+
+checks = checks.Checks()
 
 
 class Users(commands.Cog):
     """All user related commands.
     """
+    @checks.move_members
     @commands.command(name='move')
     async def move(self, ctx):
         """Moves all mentioned users to the specified channel.
@@ -16,33 +18,31 @@ class Users(commands.Cog):
         Permissions: Move Members
         """
         await ctx.message.delete()
-        if ctx.message.author.guild_permissions.move_members:
-            args = arg_parse(ctx)
-            channel_text = args[-1]
-            channel = discord.utils.find(lambda x: x.name == channel_text, ctx.message.channel.guild.channels)
+        args = arg_parse(ctx)
+        channel_text = args[-1]
+        channel = discord.utils.find(lambda x: x.name == channel_text, ctx.message.channel.guild.channels)
 
-            user_list = []
-            for user in ctx.message.mentions:
-                await user.move_to(channel)
-                user_list.append(user.name)
-            user_list_string = ', '.join(user_list)
+        user_list = []
+        for user in ctx.message.mentions:
+            await user.move_to(channel)
+            user_list.append(user.name)
+        user_list_string = ', '.join(user_list)
 
-            if channel is None:
-                if len(user_list) == 1:
-                    response = f'{user_list_string} has been sent to oblivion.'
-                else:
-                    response = f'({user_list_string}) have been sent to oblivion.'
+        if channel is None:
+            if len(user_list) == 1:
+                response = f'{user_list_string} has been sent to oblivion.'
             else:
-                if len(user_list) == 1:
-                    response = f'Moved {user_list_string} to {channel}.'
-                else:
-                    response = f'Moved ({user_list_string}) to {channel}.'
+                response = f'({user_list_string}) have been sent to oblivion.'
         else:
-            response = 'You do not have the permissions to do this.'
+            if len(user_list) == 1:
+                response = f'Moved {user_list_string} to {channel}.'
+            else:
+                response = f'Moved ({user_list_string}) to {channel}.'
 
         await ctx.send(response)
         print(response)
 
+    @checks.move_members
     @commands.command(name='move_all')
     async def move_all(self, ctx):
         """Moves all users in a channel to another channel.
@@ -52,33 +52,32 @@ class Users(commands.Cog):
         Permissions: Move Members
         """
         await ctx.message.delete()
-        if ctx.message.author.guild_permissions.move_members:
-            args = arg_parse(ctx)
-            channel1 = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
-            channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
 
-            user_list = []
-            for user in channel1.members:
-                await user.move_to(channel2)
-                user_list.append(user.name)
-            user_list_string = ', '.join(user_list)
+        args = arg_parse(ctx)
+        channel1 = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
+        channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
 
-            if channel2 is None:
-                if len(user_list) == 1:
-                    response = f'{user_list_string} has been sent to oblivion.'
-                else:
-                    response = f'({user_list_string}) have been sent to oblivion.'
+        user_list = []
+        for user in channel1.members:
+            await user.move_to(channel2)
+            user_list.append(user.name)
+        user_list_string = ', '.join(user_list)
+
+        if channel2 is None:
+            if len(user_list) == 1:
+                response = f'{user_list_string} has been sent to oblivion.'
             else:
-                if len(user_list) == 1:
-                    response = f'Moved {user_list_string} from {channel1} to {channel2}.'
-                else:
-                    response = f'Moved ({user_list_string}) from {channel1} to {channel2}.'
+                response = f'({user_list_string}) have been sent to oblivion.'
         else:
-            response = 'You do not have the permissions to do this.'
+            if len(user_list) == 1:
+                response = f'Moved {user_list_string} from {channel1} to {channel2}.'
+            else:
+                response = f'Moved ({user_list_string}) from {channel1} to {channel2}.'
 
         await ctx.send(response)
         print(response)
 
+    @checks.move_members
     @commands.command(name='move_all_guild')
     async def move_all_guild(self, ctx):
         """Moves every user in the entire server to one channel.
