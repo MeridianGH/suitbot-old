@@ -8,10 +8,11 @@ checks = checks.Checks()
 class Users(commands.Cog):
     """All user related commands.
     """
-    @checks.move_members
+    @checks.move_members()
     @commands.command(name='move')
     async def move(self, ctx):
         """Moves all mentioned users to the specified channel.
+        Syntax:      -move [Users] [Channel]
         Parameters:  [Users]: Mention all users like this: @User
                      [Channel] (optional): Exact channel name. The user(s) will be moved to this channel.
                                           If no channel name has been specified, all users will be disconnected.
@@ -30,9 +31,9 @@ class Users(commands.Cog):
 
         if channel is None:
             if len(user_list) == 1:
-                response = f'{user_list_string} has been sent to oblivion.'
+                response = f'[ Info ] {user_list_string} has been sent to oblivion.'
             else:
-                response = f'({user_list_string}) have been sent to oblivion.'
+                response = f'[ Info ] ({user_list_string}) have been sent to oblivion.'
         else:
             if len(user_list) == 1:
                 response = f'Moved {user_list_string} to {channel}.'
@@ -40,12 +41,13 @@ class Users(commands.Cog):
                 response = f'Moved ({user_list_string}) to {channel}.'
 
         await ctx.send(response)
-        print(response)
+        print(f'[ Info ] {response}')
 
-    @checks.move_members
+    @checks.move_members()
     @commands.command(name='move_all')
     async def move_all(self, ctx):
         """Moves all users in a channel to another channel.
+        Syntax:      -move_all [Channel1] [Channel2]
         Parameters:  [Channel1]: Exact channel name. The channel the users are currently connected to.
                      [Channel2] (optional): Exact channel name. The user(s) will be moved to this channel.
                                            If no channel name has been specified, all users will be disconnected.
@@ -75,20 +77,23 @@ class Users(commands.Cog):
                 response = f'Moved ({user_list_string}) from {channel1} to {channel2}.'
 
         await ctx.send(response)
-        print(response)
+        print(f'[ Info ] {response}')
 
-    @checks.move_members
-    @commands.command(name='move_all_guild')
-    async def move_all_guild(self, ctx):
-        """Moves every user in the entire server to one channel.
-        """
-        await ctx.message.delete()
-        args = arg_parse(ctx)
-        channel = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
-
-        for ch in ctx.message.channel.guild.voice_channels:
-            for user in ch.members:
-                await user.move_to(channel)
+    # @checks.move_members()
+    # @commands.command(name='move_all_guild')
+    # async def move_all_guild(self, ctx):
+    #     """Moves every user in the entire server to one channel.
+    #     Syntax:      -move_all_guild [Channel1]
+    #     Parameters:  [Channel1]: Exact channel name. The user(s) will be moved to this channel.
+    #     Permissions: Move Members
+    #     """
+    #     await ctx.message.delete()
+    #     args = arg_parse(ctx)
+    #     channel = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
+    #
+    #     for ch in ctx.message.channel.guild.voice_channels:
+    #         for user in ch.members:
+    #             await user.move_to(channel)
 
 
 def setup(bot):

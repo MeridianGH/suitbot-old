@@ -9,7 +9,8 @@ class Stuff(commands.Cog):
     @commands.command(name='shame_on_you')
     async def shame_on_you(self, ctx):
         """Moves the mentioned user out of the channel for five seconds.
-        Parameters:  [Users]: Mention all users like this: @User
+        Syntax:      -shame_on_you [User]
+        Parameters:  [User]: Mention the user like this: @User
         Permissions: Move Members
 
         The user will be moved to a different channel and moved back after five seconds.
@@ -35,11 +36,12 @@ class Stuff(commands.Cog):
             await dm.send(content=response)
             time.sleep(5.0)
             await user.move_to(old_channel)
-            print(f'Used \'shame_on_you\' successfully on {user}.')
+            print(f'[ Info ] Used \'shame_on_you\' successfully on {user}.')
 
     @commands.command(name='say_sike')
     async def say_sike(self, ctx):
         """Sends an embed with the famous piranha plant.
+        Syntax:      -say_sike [User]
         Parameters:  [User] (optional): Will send the image in a private conversation. If not specified, will send
                                        it to the channel where the command has been invoked.
         Permissions: None
@@ -54,10 +56,12 @@ class Stuff(commands.Cog):
             user = ctx.message.mentions[0]
             dm = await user.create_dm()
             await dm.send(embed=embed)
+        print(f'[ Info ] Sent embed \'say_sike\' successfully to {ctx.message.channel}')
 
     @commands.command(name='d2_ffs')
     async def d2_ffs(self, ctx):
         """Sends an embed with the D2 Forsaken parody.
+        Syntax:      -d2_ffs [User]
         Parameters:  [User] (optional): Will send the image in a private conversation. If not specified, will send
                                        it to the channel where the command has been invoked.
         Permissions: None
@@ -72,6 +76,7 @@ class Stuff(commands.Cog):
             user = ctx.message.mentions[0]
             dm = await user.create_dm()
             await dm.send(embed=embed)
+        print(f'[ Info ] Sent embed \'d2_ffs\' successfully to {ctx.message.channel}')
 
 
 def setup(bot):
