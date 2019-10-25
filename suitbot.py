@@ -17,13 +17,18 @@ token = os.getenv('DISCORD_TOKEN')
 startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'errors.error_handling']
 bot = commands.Bot(command_prefix='-')
 
+maintenance = [discord.Activity(name='Maintenance'), discord.Status.dnd]
+normal = [discord.Activity(name='Type \'-help\' for info.'), discord.Status.online]
+processing = [discord.Activity(name='Processing...'), discord.Status.idle]
+mode = maintenance
+
 
 @bot.event
 async def on_ready():
     print(f'\n{bot.user} connected to Discord!')
     print('Close this window to stop the bot.')
     print('__________________________________\n')
-    await bot.change_presence(activity=discord.Activity(name='Maintenance Mode'), status=discord.Status.dnd)
+    await bot.change_presence(activity=mode[0], status=mode[1])
 
 
 if __name__ == '__main__':
