@@ -14,12 +14,12 @@ def resource_path(relative_path):
 load_dotenv(dotenv_path=resource_path('./venv/.env'))
 token = os.getenv('DISCORD_TOKEN')
 
-startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'errors.error_handling']
+startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'music.music', 'modules.errors']
 bot = commands.Bot(command_prefix='-')
 
-maintenance = [discord.Activity(name='Maintenance'), discord.Status.dnd]
-normal = [discord.Activity(name='Type \'-help\' for info.'), discord.Status.online]
-processing = [discord.Activity(name='Processing...'), discord.Status.idle]
+maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]
+normal = [discord.Activity(type=discord.ActivityType.playing, name='\'-help\' for info.'), discord.Status.online]
+processing = [discord.Activity(type=discord.ActivityType.playing, name='Processing...'), discord.Status.idle]
 mode = maintenance
 
 

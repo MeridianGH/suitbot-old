@@ -1,7 +1,26 @@
 import traceback
 import sys
 from discord.ext import commands
-import errors.errors as errors
+
+
+class MoveMembers(commands.CheckFailure):
+    """Missing Permission: Move Members"""
+    pass
+
+
+class InvalidArguments(commands.CommandError):
+    """No or invalid arguments specified."""
+    pass
+
+
+class MissingChannel(commands.CommandError):
+    """The user is not in a voice channel"""
+    pass
+
+
+class NotConnected(commands.CommandError):
+    """The client is not connected to a voice channel in this server."""
+    pass
 
 
 class CommandErrorHandler(commands.Cog):
@@ -19,13 +38,21 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, ignored):
             return
 
-        elif isinstance(error, errors.MoveMembers):
+        elif isinstance(error, MoveMembers):
             print(f'[Error ] Invalid permission: \'{ctx.message.author}\' tried to use \'{ctx.command}\'')
             return await ctx.send('You are missing these permissions: Move Members')
 
-        elif isinstance(error, errors.InvalidArguments):
+        elif isinstance(error, InvalidArguments):
             print(f'[Error ] No or invalid arguments in command \'{ctx.command}\' specified.')
             return await ctx.send('No or invalid arguments specified.')
+
+        elif isinstance(error, MissingChannel):
+            print(f'[Error ] No channel to join specified. {ctx.message.author} is not connected to a channel.')
+            return await ctx.send(f'No channel to join specified. {ctx.message.author} is not connected to a channel.')
+
+        elif isinstance(error, NotConnected):
+            print(f'[Error ] The client is not connected to a voice channel in this server.')
+            return await ctx.send('The client is not connected to a voice channel in this server.')
 
         elif isinstance(error, commands.CommandError):
             owner = self.bot.get_user(360817252158930954)

@@ -1,6 +1,7 @@
 from modules.utils import *
 import modules.checks as checks
 import discord
+from discord.ext import commands
 
 checks = checks.Checks()
 

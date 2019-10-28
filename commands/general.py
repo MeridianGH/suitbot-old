@@ -1,4 +1,6 @@
+from discord.ext import commands
 from modules.utils import *
+from datetime import datetime
 
 
 class General(commands.Cog):
@@ -6,6 +8,7 @@ class General(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
+        self.start_time = datetime.now()
         self.bot.help_command.cog = self
 
     @commands.command(name='ping')
@@ -21,6 +24,16 @@ class General(commands.Cog):
         message = await ctx.send(ping)
         await ctx.message.delete(delay=5)
         await message.delete(delay=5)
+
+    @commands.command()
+    async def uptime(self, ctx):
+        """Tells how long the bot has been running.
+        Syntax:      -uptime
+        Parameters:  None
+        Permissions: None
+        """
+        uptime_seconds = round((datetime.now() - self.start_time).total_seconds())
+        await ctx.send(f"Current Uptime: {format_seconds(uptime_seconds)}")
 
     @commands.command(name='clear')
     async def clear(self, ctx):
