@@ -14,7 +14,7 @@ def resource_path(relative_path):
 load_dotenv(dotenv_path=resource_path('./venv/.env'))
 token = os.getenv('DISCORD_TOKEN')
 
-startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'music.music', 'modules.errors']
+startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'modules.errors', 'music.music']
 bot = commands.Bot(command_prefix='-')
 
 maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]

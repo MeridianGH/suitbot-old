@@ -57,7 +57,8 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.CommandError):
             owner = self.bot.get_user(360817252158930954)
             await ctx.send(
-                f'Something has went wrong! Please contact the owner and specify your issue: {owner.mention}')
+                f'Error executing command `{ctx.command.name}`: {str(error)}. \
+                Please contact {owner.mention} for further assistance.")')
             print(error)
 
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)

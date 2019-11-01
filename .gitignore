@@ -124,4 +124,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Folder with files for distribution
 exe/
+# Lavalink/Wavelink files
+music/wavelink/
