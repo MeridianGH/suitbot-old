@@ -13,6 +13,15 @@ class Music(commands.Cog):
 
         self.bot.loop.create_task(self.start_nodes())
 
+    @staticmethod
+    def convert_to_monospace(chars):
+        monospace_nums = {'0': '０', '1': '１', '2': '２', '3': '３', '4': '４',
+                          '5': '５', '6': '６', '7': '７', '8': '８', '9': '９', ':': '：'}
+        for char in chars:
+            if char in monospace_nums:
+                chars = chars.replace(char, monospace_nums[char])
+        return chars
+
     async def start_nodes(self):
         await self.bot.wait_until_ready()
 
@@ -22,7 +31,7 @@ class Music(commands.Cog):
                                               port=2333,
                                               rest_uri='http://127.0.0.1:2333',
                                               password='youshallnotpass',
-                                              identifier='ident',
+                                              identifier='main',
                                               region='europe')
 
     @commands.command(name='connect')
@@ -77,36 +86,40 @@ class Music(commands.Cog):
     @commands.command(name='volume', aliases=['vol', 'v'])
     async def volume(self, ctx, vol):
         player = self.bot.wavelink.get_player(ctx.guild.id)
-        vol = int(vol) * 10
+        vol = int(vol)
         if not 0 <= vol <= 100:
             await ctx.send('Please specify a valid value between 0 and 100!')
         else:
             await player.set_volume(vol=vol)
+            await ctx.send(f'Volume set to {vol}%!')
 
     @commands.command(name='now_playing', aliases=['np', 'now'])
     async def now_playing(self, ctx):
         player = self.bot.wavelink.get_player(ctx.guild.id)
-        track = player.current
+        if player.is_playing:
+            track = player.current
 
-        percentage = (player.position / track.duration) * 100
-        percentage = int(percentage / 2)
-        length_dash = percentage - 1
-        length_empty = 50 - percentage
-        progress_bar = '[ ' + (length_dash * '-') + '0' + (length_empty * ' ') + ' ]'
+            percentage = (player.position / track.duration) * 100
+            percentage = int(percentage / 4)
+            length_dash = percentage - 1
+            if length_dash < 1:
+                length_empty = 24
+            else:
+                length_empty = 25 - percentage
+            progress_bar = '｜' + (length_dash * '－') + 'Ｏ' + (length_empty * '　') + '｜'
 
-        current = time.strftime('%M:%S', time.gmtime(player.position/1000))
-        end = time.strftime('%M:%S', time.gmtime(track.duration/1000))
-        if length_dash <= 7:
-            times = '00:00' + ' ' + current + (length_empty-14) * ' ' + end
-        elif length_empty <= 7:
-            times = '00:00' + (length_dash - 14) * ' ' + current + ' ' + end
+            start = self.convert_to_monospace('00:00')
+            current = self.convert_to_monospace(time.strftime('%M:%S', time.gmtime(player.position/1000)))
+            end = self.convert_to_monospace(time.strftime('%M:%S', time.gmtime(track.duration/1000)))
+            times = start+'　　　　　　'+current+'　　　　　　'+end
+
+            embed = discord.Embed(title='Now playing:', description=f'[{track.author} - {track.title}]({track.uri})',
+                                  color=0xff0000)
+            embed.add_field(name=progress_bar, value=times)
+            embed.set_image(url=track.thumb)
         else:
-            times = '00:00' + (length_dash - 7) * ' ' + current + (length_empty - 7) * ' ' + end
-
-        embed = discord.Embed(title='Now playing:', description=f'[{track.author} - {track.title}]({track.uri})',
-                              color=0xff0000)
-        embed.add_field(name=progress_bar, value=times)
-        embed.set_image(url=track.thumb)
+            embed = discord.Embed(title='Now playing:', color=0xff0000,
+                                  description='I\'m not playing anything! Type \'-play\' to add a song!')
         await ctx.send(embed=embed)
 
 

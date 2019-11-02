@@ -45,8 +45,14 @@ class General(commands.Cog):
         await ctx.message.delete()
         args = arg_parse(ctx)
         deleted = await ctx.message.channel.purge(limit=int(args[0]))
-        print(f'[ Info ] Deleted {len(deleted)} messages in #{ctx.message.channel}')
-        message = await ctx.send('Deleted {} message(s)'.format(len(deleted)))
+        if len(deleted) == 0:
+            return
+        elif len(deleted) == 1:
+            msg_text = 'message'
+        else:
+            msg_text = 'messages'
+        print(f'[ Info ] Deleted {len(deleted)} {msg_text} in #{ctx.message.channel}')
+        message = await ctx.send(f'Deleted {len(deleted)} {msg_text}')
         await message.delete(delay=5)
 
 
