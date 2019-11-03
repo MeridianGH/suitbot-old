@@ -31,7 +31,7 @@ async def on_ready():
     await bot.change_presence(activity=mode[0], status=mode[1])
 
 
-if __name__ == '__main__':
+def run():
     for extension in startup_extensions:
         try:
             bot.load_extension(extension)
@@ -40,5 +40,9 @@ if __name__ == '__main__':
             exception = '{}: {}'.format(type(e).__name__, e)
             print(f'[Error ] Failed to load extension {extension}')
             print(f'[Error ] {exception}')
-    # Invite: https://discordapp.com/api/oauth2/authorize?client_id=610495026002133003&permissions=62915584&scope=bot
     bot.run(token)
+
+
+if __name__ == '__main__':
+    run()
+    # Invite: https://discordapp.com/api/oauth2/authorize?client_id=610495026002133003&permissions=62915584&scope=bot

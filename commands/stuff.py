@@ -52,11 +52,13 @@ class Stuff(commands.Cog):
         embed.set_footer(text='say sike right now')
         if len(ctx.message.mentions) == 0:
             await ctx.send(embed=embed)
+            receiver = ctx.message.channel
         else:
             user = ctx.message.mentions[0]
             dm = await user.create_dm()
             await dm.send(embed=embed)
-        print(f'[ Info ] Sent embed \'say_sike\' successfully to {ctx.message.channel}')
+            receiver = user
+        print(f'[ Info ] Sent embed \'say_sike\' successfully to {receiver}')
 
     @commands.command(name='d2_ffs')
     async def d2_ffs(self, ctx):
@@ -72,11 +74,13 @@ class Stuff(commands.Cog):
         embed.set_footer(text='bungo plz')
         if len(ctx.message.mentions) == 0:
             await ctx.send(embed=embed)
+            receiver = ctx.message.channel
         else:
             user = ctx.message.mentions[0]
             dm = await user.create_dm()
             await dm.send(embed=embed)
-        print(f'[ Info ] Sent embed \'d2_ffs\' successfully to {ctx.message.channel}')
+            receiver = user
+        print(f'[ Info ] Sent embed \'d2_ffs\' successfully to {receiver}')
 
 
 def setup(bot):
