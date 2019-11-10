@@ -9,24 +9,43 @@
 ![Followers](https://img.shields.io/github/followers/meridianpy.svg?label=Followers&style=social)
 
 This is my own Discord bot. I use it for some various unusual commands.
-I plan to implement a music feature, as well as a TTS-Engine.
-I used [discord.py](https://github.com/Rapptz/discord.py) to create the bot.
+I used [discord.py](https://github.com/Rapptz/discord.py) to create the bot
+and [WaveLink](https://github.com/PythonistaGuild/Wavelink) to play music.
 
 ## How to use
 
 Currently this bot is not available for public use.
 I plan to host it on a server running 24/7 and make it public, but that will take a while.
 
-## Features
-- ```-ping```
-    - Sends the current response time in ms.
-- ```-move [@Users] Channel```
-    - Moves all mentioned users to the specified channel.
-- ```-move_all Channel1 Channel2```
-    - Moves all users in a channel to another channel.
-- ```-shame_on_you @User```
-    - Moves the mentioned user out of the channel for five seconds so he can contemplate his life choices.
-- ```-say_sike```
-    - Send a picture of a specific piranha plant.
+## Commands
 
-More to come here soon!
+These are the current commands. I plan to implement even more functionality.
+- General:
+  ```
+  clear        Deletes a given amount of messages in the current channel.
+  help         Shows this message
+  ping         Sends the current response time in ms.
+  uptime       Tells how long the bot has been running.
+- Music:
+  ```
+  connect      Connect to voice.
+  info         Retrieve various Music / WaveLink information.
+  now_playing  Invoke the player controller.
+  pause        Pause the currently playing song.
+  play         Queue a song or playlist for playback.
+  queue        Retrieve a list of currently queued songs.
+  repeat       Repeat the currently playing song.
+  resume       Resume a currently paused song.
+  shuffle      Shuffle the current queue.
+  skip         Skip the current song.
+  stop         Stop the player, disconnect and clear the queue.
+  volume       Change the player volume.
+- Stuff:
+  ```
+  d2_ffs       Sends an embed with the D2 Forsaken parody.
+  say_sike     Sends an embed with the famous piranha plant.
+  shame_on_you Moves the mentioned user out of the channel for five seconds.
+- Users:
+  ```
+  move         Moves all mentioned users to the specified channel.
+  move_all     Moves all users in a channel to another channel.

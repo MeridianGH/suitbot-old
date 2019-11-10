@@ -16,7 +16,10 @@ class Stuff(commands.Cog):
         The user will be moved to a different channel and moved back after five seconds.
         He should contemplate his life choices.
         """
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
         user = ctx.message.mentions[0]
         owner_id = ctx.message.channel.guild.owner_id
 
@@ -46,12 +49,17 @@ class Stuff(commands.Cog):
                                        it to the channel where the command has been invoked.
         Permissions: None
         """
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+
         embed = discord.Embed()
         embed.set_image(url='https://i.kym-cdn.com/entries/icons/original/000/030/414/plant.jpg')
         embed.set_footer(text='say sike right now')
+
         if len(ctx.message.mentions) == 0:
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, delete_after=10)
             receiver = ctx.message.channel
         else:
             user = ctx.message.mentions[0]
@@ -68,10 +76,15 @@ class Stuff(commands.Cog):
                                        it to the channel where the command has been invoked.
         Permissions: None
         """
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+
         embed = discord.Embed()
         embed.set_image(url='https://pbs.twimg.com/media/EG70xsgXYAAw4Ne?format=jpg&name=medium')
         embed.set_footer(text='bungo plz')
+
         if len(ctx.message.mentions) == 0:
             await ctx.send(embed=embed)
             receiver = ctx.message.channel

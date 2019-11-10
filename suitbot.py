@@ -14,12 +14,12 @@ def resource_path(relative_path):
 load_dotenv(dotenv_path=resource_path('./venv/.env'))
 token = os.getenv('DISCORD_TOKEN')
 
-startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'modules.errors', 'music.advanced']
+startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'modules.errors', 'music.music']
 bot = commands.Bot(command_prefix='-')
 
 maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]
 normal = [discord.Activity(type=discord.ActivityType.playing, name='\'-help\' for info.'), discord.Status.online]
-processing = [discord.Activity(type=discord.ActivityType.playing, name='Processing...'), discord.Status.idle]
+shutdown = [discord.Activity(type=discord.ActivityType.playing, name='Shutting down...'), discord.Status.dnd]
 mode = normal
 
 
@@ -41,6 +41,7 @@ def run():
             print(f'[Error ] Failed to load extension {extension}')
             print(f'[Error ] {exception}')
     bot.run(token)
+    return bot
 
 
 if __name__ == '__main__':
