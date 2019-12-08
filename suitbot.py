@@ -5,6 +5,7 @@ from discord.ext import commands
 import discord
 
 
+
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)
@@ -19,7 +20,6 @@ bot = commands.Bot(command_prefix='-')
 
 maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]
 normal = [discord.Activity(type=discord.ActivityType.playing, name='\'-help\' for info.'), discord.Status.online]
-shutdown = [discord.Activity(type=discord.ActivityType.playing, name='Shutting down...'), discord.Status.dnd]
 mode = normal
 
 
@@ -38,7 +38,7 @@ def run():
             print(f'[Status] Successfully loaded extension \'{extension}\'')
         except Exception as e:
             exception = '{}: {}'.format(type(e).__name__, e)
-            print(f'[Error ] Failed to load extension {extension}')
+            print(f'[Error ] Failed to load extension \'{extension}\':')
             print(f'[Error ] {exception}')
     bot.run(token)
     return bot

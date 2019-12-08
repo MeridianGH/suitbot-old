@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import time
 import discord
 import itertools
 import math
@@ -9,6 +8,7 @@ import re
 import wavelink
 from discord.ext import commands
 from typing import Union
+import humanize
 
 RURL = re.compile(r'https?:\/\/(?:www\.)?.+')
 
@@ -28,12 +28,19 @@ class Track(wavelink.Track):
         return self.dead
 
 
-class Player(wavelink.Player):
+class Queue(asyncio.Queue):
+    def queue(self):
+        if hasattr(self, '_queue'):
+            return self._queue
+        else:
+            return []
 
+
+class Player(wavelink.Player):
     def __init__(self, bot: Union[commands.Bot, commands.AutoShardedBot], guild_id: int, node: wavelink.Node):
         super(Player, self).__init__(bot, guild_id, node)
 
-        self.queue = asyncio.Queue()
+        self.queue = Queue()
         self.next_event = asyncio.Event()
 
         self.volume = 50
@@ -58,7 +65,7 @@ class Player(wavelink.Player):
 
     @property
     def entries(self):
-        return list(self.queue._queue)
+        return list(self.queue.queue())
 
     async def updater(self):
         while not self.bot.is_closed():
@@ -112,7 +119,6 @@ class Player(wavelink.Player):
             embed.add_field(name='Duration', value='🔴`Streaming`')
         else:
             embed.add_field(name='Duration', value=str(datetime.timedelta(milliseconds=int(track.length))))
-        embed.add_field(name='Requested By', value=track.requester.mention)
         embed.add_field(name='Queue Length', value=str(len(self.entries)))
         embed.add_field(name='Volume', value=f'{self.volume}%')
 
@@ -239,11 +245,8 @@ class Player(wavelink.Player):
         return False
 
 
-# noinspection PyUnresolvedReferences
 class Music(commands.Cog):
-    """Our main Music Cog."""
-
-    def __init__(self, bot: Union[commands.Bot, commands.AutoShardedBot]):
+    def __init__(self, bot):
         self.bot = bot
 
         if not hasattr(bot, 'wavelink'):
@@ -322,13 +325,13 @@ class Music(commands.Cog):
 
         await ctx.trigger_typing()
 
-        await ctx.invoke(self.connect_)
+        await ctx.invoke(self.connect)
         query = query.strip('<>')
 
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            await ctx.invoke(self.connect_)
+            await ctx.invoke(self.connect)
 
         if not player.dj:
             player.dj = ctx.author
@@ -472,11 +475,8 @@ class Music(commands.Cog):
         if not player.is_connected:
             return await ctx.send('I am not currently connected to voice!')
 
-        if await self.has_perms(ctx, manage_guild=True):
-            await ctx.send(f'{ctx.author.mention} has stopped the player as an admin or DJ.', delete_after=10)
-            return await self.do_stop(ctx)
-
-        await self.do_vote(ctx, player, 'stop')
+        await ctx.send(f'{ctx.author.mention} has stopped the player.', delete_after=10)
+        return await self.do_stop(ctx)
 
     async def do_stop(self, ctx):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)

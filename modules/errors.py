@@ -1,5 +1,6 @@
 import traceback
 import sys
+from discord.http import Forbidden
 from discord.ext import commands
 
 
@@ -53,6 +54,9 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, NotConnected):
             print(f'[Error ] The client is not connected to a voice channel in this server.')
             return await ctx.send('The client is not connected to a voice channel in this server.')
+
+        elif isinstance(error, Forbidden):
+            print('[Error ] HTTP error: Can\'t make API call.')
 
         elif isinstance(error, commands.CommandError):
             owner = self.bot.get_user(360817252158930954)

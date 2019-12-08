@@ -25,9 +25,10 @@ class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.start_time = datetime.now()
-        self._original_help_command = bot.help_command
-        bot.help_command = MyHelpCommand()
-        bot.help_command.cog = self
+        self.bot.help_command.cog = self
+        # self._original_help_command = bot.help_command
+        # bot.help_command = MyHelpCommand()
+        # bot.help_command.cog = self
 
     @commands.command(name='ping')
     async def ping(self, ctx):
