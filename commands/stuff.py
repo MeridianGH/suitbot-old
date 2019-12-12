@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import time
+from modules.log.logging import *
 
 
 class Stuff(commands.Cog):
@@ -39,7 +40,7 @@ class Stuff(commands.Cog):
             await dm.send(content=response)
             time.sleep(5.0)
             await user.move_to(old_channel)
-            print(f'[ Info ] Used \'shame_on_you\' successfully on {user}.')
+            send_log(f'[ Info ] Used \'shame_on_you\' on {user}.')
 
     @commands.command(name='say_sike')
     async def say_sike(self, ctx):
@@ -66,7 +67,7 @@ class Stuff(commands.Cog):
             dm = await user.create_dm()
             await dm.send(embed=embed)
             receiver = user
-        print(f'[ Info ] Sent embed \'say_sike\' successfully to {receiver}')
+        send_log(f'[ Info ] Sent embed \'say_sike\' to \'{receiver}\'')
 
     @commands.command(name='d2_ffs')
     async def d2_ffs(self, ctx):
@@ -93,7 +94,7 @@ class Stuff(commands.Cog):
             dm = await user.create_dm()
             await dm.send(embed=embed)
             receiver = user
-        print(f'[ Info ] Sent embed \'d2_ffs\' successfully to {receiver}')
+        send_log(f'[ Info ] Sent embed \'d2_ffs\' to \'{receiver}\'')
 
 
 def setup(bot):

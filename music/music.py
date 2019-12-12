@@ -9,6 +9,7 @@ import wavelink
 from discord.ext import commands
 from typing import Union
 import humanize
+from modules.log.logging import *
 
 RURL = re.compile(r'https?:\/\/(?:www\.)?.+')
 
@@ -310,6 +311,7 @@ class Music(commands.Cog):
                 return
 
         await player.connect(channel.id)
+        send_log(f'[ Info ] Connected to channel \'{ctx.guild.me.voice.channel}\' in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='play')
     async def play(self, ctx, *, query: str):
@@ -356,6 +358,7 @@ class Music(commands.Cog):
 
         if player.controller_message and player.is_playing:
             await player.invoke_controller()
+        send_log(f'[ Info ] Added track(s) {tracks} to the queue in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='now_playing', aliases=['np', 'now'])
     async def now_playing(self, ctx):
@@ -401,6 +404,7 @@ class Music(commands.Cog):
         if player.paused:
             return
 
+        send_log(f'[ Info ] Paused the player in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has paused the song!', delete_after=10)
         return await self.do_pause(ctx)
 
@@ -428,6 +432,7 @@ class Music(commands.Cog):
         if not player.paused:
             return
 
+        send_log(f'[ Info ] Resumed the player in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has resumed the song!', delete_after=10)
         return await self.do_resume(ctx)
 
@@ -451,6 +456,7 @@ class Music(commands.Cog):
         if not player.is_connected:
             return await ctx.send('I am not currently connected to voice!')
 
+        send_log(f'[ Info ] Skipped a song in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has skipped the song!', delete_after=10)
         return await self.do_skip(ctx)
 
@@ -475,6 +481,7 @@ class Music(commands.Cog):
         if not player.is_connected:
             return await ctx.send('I am not currently connected to voice!')
 
+        send_log(f'[ Info ] Stopped the player in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has stopped the player.', delete_after=10)
         return await self.do_stop(ctx)
 
@@ -509,6 +516,8 @@ class Music(commands.Cog):
         if not player.updating and not player.update:
             await player.invoke_controller()
 
+        send_log(f'[ Info ] Set the volume to {value}% in guild \'{ctx.guild.name}\'.')
+
     @commands.command(name='queue', aliases=['q'])
     async def queue(self, ctx):
         """Retrieve a list of currently queued songs.
@@ -534,6 +543,7 @@ class Music(commands.Cog):
         embed = discord.Embed(title=f'Upcoming - Next {len(upcoming)}', description=fmt)
 
         await ctx.send(embed=embed)
+        send_log(f'[ Info ] Sent the queue to channel \'{ctx.message.channel}\' in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='shuffle', aliases=['mix'])
     async def shuffle(self, ctx):
@@ -554,6 +564,7 @@ class Music(commands.Cog):
         if len(player.entries) < 3:
             return await ctx.send('Please add more songs to the queue before trying to shuffle.', delete_after=10)
 
+        send_log(f'[ Info ] Shuffled the queue in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has shuffled the playlist!', delete_after=10)
         return await self.do_shuffle(ctx)
 
@@ -579,6 +590,7 @@ class Music(commands.Cog):
         if not player.is_connected:
             return
 
+        send_log(f'[ Info ] Set a song on repeat in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} set the song on repeat!', delete_after=10)
         return await self.do_repeat(ctx)
 
@@ -663,6 +675,7 @@ class Music(commands.Cog):
               f'Server CPU: `{cpu}`\n\n' \
               f'Server Uptime: `{datetime.timedelta(milliseconds=node.stats.uptime)}`'
         await ctx.send(fmt)
+        send_log(f'[ Info ] Sent WaveLink info to channel \'{ctx.message.channel}\' in guild \'{ctx.guild.name}\'.')
 
 
 def setup(bot):

@@ -1,5 +1,6 @@
 from modules.utils import *
 import modules.checks as checks
+from modules.log.logging import *
 import discord
 from discord.ext import commands
 
@@ -37,12 +38,12 @@ class Users(commands.Cog):
                 response = f'[ Info ] ({user_list_string}) have been sent to oblivion.'
         else:
             if len(user_list) == 1:
-                response = f'Moved {user_list_string} to {channel}.'
+                response = f'Moved \'{user_list_string}\' to \'{channel}\'.'
             else:
-                response = f'Moved ({user_list_string}) to {channel}.'
+                response = f'Moved ({user_list_string}) to \'{channel}\'.'
 
         await ctx.send(response)
-        print(f'[ Info ] {response}')
+        send_log(f'[ Info ] {response}')
 
     @checks.move_members()
     @commands.command(name='move_all')
@@ -68,17 +69,17 @@ class Users(commands.Cog):
 
         if channel2 is None:
             if len(user_list) == 1:
-                response = f'{user_list_string} has been sent to oblivion.'
+                response = f'\'{user_list_string}\' has been sent to oblivion.'
             else:
                 response = f'({user_list_string}) have been sent to oblivion.'
         else:
             if len(user_list) == 1:
-                response = f'Moved {user_list_string} from {channel1} to {channel2}.'
+                response = f'Moved \'{user_list_string}\' from \'{channel1}\' to \'{channel2}\'.'
             else:
-                response = f'Moved ({user_list_string}) from {channel1} to {channel2}.'
+                response = f'Moved ({user_list_string}) from \'{channel1}\' to \'{channel2}\'.'
 
         await ctx.send(response)
-        print(f'[ Info ] {response}')
+        send_log(f'[ Info ] {response}')
 
     # @checks.move_members()
     # @commands.command(name='move_all_guild')

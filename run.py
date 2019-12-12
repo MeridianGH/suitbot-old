@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import suitbot
+from modules.log.logging import *
 
 
 def resource_path(relative_path):
@@ -11,19 +12,20 @@ def resource_path(relative_path):
 
 
 def start_lavalink():
-    lavalink = subprocess.Popen(['java', '-jar', 'Lavalink_fixed.jar'], stdout=subprocess.PIPE)
+    lavalink = subprocess.Popen(['java', '-jar', 'Lavalink.jar'], stdout=subprocess.PIPE)
     while True:
         line = str(lavalink.stdout.readline())
         if 'Started Launcher' in line:
-            print('[Status] Successfully started music server \'WaveLink\'')
+            send_log(f'[Status] Successfully started music server \'WaveLink\'')
             return True
         elif 'FAILED' in line:
-            print('[Error ] Failed to start music server \'WaveLink\'.\n[ Info ] Music commands might not work!')
+            send_log(f'[Error ] Failed to start music server \'WaveLink\'.')
+            send_log(f'     ⮡     [ Info ] Music commands might not work!', time=False)
             return False
 
 
 if __name__ == '__main__':
     os.chdir(resource_path('./music/wavelink/'))
-    print('[Status] Loading extensions...')
+    send_log(f'[Status] Loading extensions...')
     start_lavalink()
     suitbot.run()

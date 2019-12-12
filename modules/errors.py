@@ -1,7 +1,6 @@
-import traceback
-import sys
 from discord.http import Forbidden
 from discord.ext import commands
+from modules.log.logging import *
 
 
 class MoveMembers(commands.CheckFailure):
@@ -40,33 +39,31 @@ class CommandErrorHandler(commands.Cog):
             return
 
         elif isinstance(error, MoveMembers):
-            print(f'[Error ] Invalid permission: \'{ctx.message.author}\' tried to use \'{ctx.command}\'')
+            send_log(f'[Error ] Invalid permission: \'{ctx.author}\' tried to use \'{ctx.command}\'')
             return await ctx.send('You are missing these permissions: Move Members')
 
         elif isinstance(error, InvalidArguments):
-            print(f'[Error ] No or invalid arguments in command \'{ctx.command}\' specified.')
+            send_log(f'[Error ] No or invalid arguments in command \'{ctx.command}\' specified.')
             return await ctx.send('No or invalid arguments specified.')
 
         elif isinstance(error, MissingChannel):
-            print(f'[Error ] No channel to join specified. {ctx.message.author} is not connected to a channel.')
-            return await ctx.send(f'No channel to join specified. {ctx.message.author} is not connected to a channel.')
+            send_log(f'[Error ] No channel to join specified. \'{ctx.author}\' is not connected to a channel.')
+            return await ctx.send(f'No channel to join specified. {ctx.author.mention} is not connected to a channel.')
 
         elif isinstance(error, NotConnected):
-            print(f'[Error ] The client is not connected to a voice channel in this server.')
+            send_log(f'[Error ] The client is not connected to a voice channel in \'{ctx.guild.name}\'.')
             return await ctx.send('The client is not connected to a voice channel in this server.')
 
         elif isinstance(error, Forbidden):
-            print('[Error ] HTTP error: Can\'t make API call.')
+            send_log(f'[Error ] HTTP error: Can\'t make API call for command {ctx.command}.')
 
         elif isinstance(error, commands.CommandError):
             owner = self.bot.get_user(360817252158930954)
             await ctx.send(
                 f'Error executing command `{ctx.command.name}`: {str(error)}. \
                 Please contact {owner.mention} for further assistance.")')
-            print(error)
 
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        log_traceback(error, error.__traceback__, ctx.command)
 
 
 def setup(bot):

@@ -1,9 +1,7 @@
-import os
-import sys
 from dotenv import load_dotenv
 from discord.ext import commands
 import discord
-
+from modules.log.logging import *
 
 
 def resource_path(relative_path):
@@ -27,7 +25,8 @@ mode = normal
 async def on_ready():
     print(f'\n{bot.user} connected to Discord!')
     print('Close this window to stop the bot.')
-    print('__________________________________\n')
+    print(f'_____________{get_time()}_____________\n')
+    send_log(f'[Status] {bot.user} connected to Discord.', prnt=False)
     await bot.change_presence(activity=mode[0], status=mode[1])
 
 
@@ -35,11 +34,11 @@ def run():
     for extension in startup_extensions:
         try:
             bot.load_extension(extension)
-            print(f'[Status] Successfully loaded extension \'{extension}\'')
+            send_log(f'[Status] Successfully loaded extension \'{extension}\'')
         except Exception as e:
             exception = '{}: {}'.format(type(e).__name__, e)
-            print(f'[Error ] Failed to load extension \'{extension}\':')
-            print(f'[Error ] {exception}')
+            send_log(f'[Error ] Failed to load extension \'{extension}\':')
+            send_log(f'     ⮡     [Error ] {exception}', time=False)
     bot.run(token)
     return bot
 

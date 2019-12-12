@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from modules.utils import *
+from modules.log.logging import *
 from datetime import datetime
 
 
@@ -43,8 +44,8 @@ class General(commands.Cog):
         except discord.HTTPException:
             pass
         ping = str(round(self.bot.latency * 1000)) + 'ms'
-        print(f'[ Info ] Ping: {ping}')
-        await ctx.send(ping, delete_after=10)
+        send_log(f'[ Info ] Ping: {ping}')
+        await ctx.send(f'Ping: {ping}', delete_after=10)
 
     @commands.command()
     async def uptime(self, ctx):
@@ -59,7 +60,8 @@ class General(commands.Cog):
             pass
 
         uptime_seconds = round((datetime.now() - self.start_time).total_seconds())
-        await ctx.send(f"Current Uptime: {format_seconds(uptime_seconds)}", delete_after=10)
+        send_log(f'Current Uptime: {format_seconds(uptime_seconds)}')
+        await ctx.send(f'Current Uptime: {format_seconds(uptime_seconds)}', delete_after=10)
 
     @commands.command(name='clear')
     async def clear(self, ctx):
@@ -83,7 +85,7 @@ class General(commands.Cog):
             msg_text = 'message'
         else:
             msg_text = 'messages'
-        print(f'[ Info ] Deleted {len(deleted)} {msg_text} in #{ctx.message.channel}')
+        send_log(f'[ Info ] Deleted {len(deleted)} {msg_text} in #{ctx.message.channel}')
         await ctx.send(f'Deleted {len(deleted)} {msg_text}', delete_after=10)
 
 
