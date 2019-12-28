@@ -42,9 +42,12 @@ These are the current commands. I plan to implement even more functionality.
   volume       Change the player volume.
 - Stuff:
   ```
-  d2_ffs       Sends an embed with the D2 Forsaken parody.
+  d2_ffs       Sends an embed with the Destiny 2 Forsaken parody.
   say_sike     Sends an embed with the famous piranha plant.
   shame_on_you Moves the mentioned user out of the channel for five seconds.
+- Translating:
+  ```
+  translate    Translates messages by ID or plain text.
 - Users:
   ```
   move         Moves all mentioned users to the specified channel.
