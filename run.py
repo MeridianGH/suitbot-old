@@ -2,7 +2,7 @@ import subprocess
 import sys
 import os
 import suitbot
-from modules.log.logging import *
+from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 
 
 def resource_path(relative_path):
@@ -20,7 +20,7 @@ def start_lavalink():
             return True
         elif 'FAILED' in line:
             send_log(f'[Error ] Failed to start music server \'WaveLink\'.')
-            send_log(f'     ⮡     [ Info ] Music commands might not work!', time=False)
+            send_log(f'     ->    [ Info ] Music commands might not work!', time=False)
             return False
 
 

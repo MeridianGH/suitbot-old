@@ -1,7 +1,9 @@
 from dotenv import load_dotenv
 from discord.ext import commands
 import discord
-from modules.log.logging import *
+import sys
+import os
+from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 
 
 def resource_path(relative_path):
@@ -13,7 +15,8 @@ def resource_path(relative_path):
 load_dotenv(dotenv_path=resource_path('./venv/.env'))
 token = os.getenv('DISCORD_TOKEN')
 
-startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'modules.errors', 'music.music']
+startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'commands.translating',
+                      'modules.errors', 'music.music']
 bot = commands.Bot(command_prefix='-')
 
 maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]
@@ -38,7 +41,7 @@ def run():
         except Exception as e:
             exception = '{}: {}'.format(type(e).__name__, e)
             send_log(f'[Error ] Failed to load extension \'{extension}\':')
-            send_log(f'     ⮡     [Error ] {exception}', time=False)
+            send_log(f'     ->    [Error ] {exception}', time=False)
     bot.run(token)
     return bot
 

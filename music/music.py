@@ -9,7 +9,7 @@ import wavelink
 from discord.ext import commands
 from typing import Union
 import humanize
-from modules.log.logging import *
+from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 
 RURL = re.compile(r'https?:\/\/(?:www\.)?.+')
 
@@ -351,14 +351,16 @@ class Music(commands.Cog):
 
             await ctx.send(f'```ini\nAdded the playlist {tracks.data["playlistInfo"]["name"]}'
                            f' with {len(tracks.tracks)} songs to the queue.\n```')
+            send_log(f'[ Info ] Added the playlist {tracks.data["playlistInfo"]["name"]} '
+                     f'to the queue in guild \'{ctx.guild.name}\'.')
         else:
             track = tracks[0]
             await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=10)
             await player.queue.put(Track(track.id, track.info, ctx=ctx))
+            send_log(f'[ Info ] Added track {track.title} to the queue in guild \'{ctx.guild.name}\'.')
 
         if player.controller_message and player.is_playing:
             await player.invoke_controller()
-        send_log(f'[ Info ] Added track(s) {tracks} to the queue in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='now_playing', aliases=['np', 'now'])
     async def now_playing(self, ctx):

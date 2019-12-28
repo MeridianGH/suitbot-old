@@ -1,7 +1,7 @@
 import sys
 import os
 from datetime import datetime
-imprt = 'from modules.log.logging import *'
+imprt = 'from modules.log.logging import get_log_path, get_time, send_log, log_traceback'
 
 
 def get_log_path():
@@ -9,7 +9,7 @@ def get_log_path():
         userprofile = os.getenv('UserProfile')
         return f'{userprofile}/Documents/GitHub/suitbot/modules/log'
     elif sys.platform.startswith('linux'):
-        return '/home/pi/suitbot/modules/log'
+        return '/home/pi/bots/suitbot/modules/log'
     else:
         return None
 
@@ -18,7 +18,7 @@ def send_log(string, time=True, prnt=True):
     if time:
         time = f'[{get_time()}] '
     else:
-        time = None
+        time = ''
 
     with open(f'{get_log_path()}/log.txt', 'a') as log:
         log.write(f'{time}{string}\n')
@@ -41,3 +41,6 @@ def log_traceback(error, traceback, command):
 
 def get_time():
     return datetime.now().strftime('%H:%M:%S')
+
+
+open(f'{get_log_path()}/log.txt', 'w').close()

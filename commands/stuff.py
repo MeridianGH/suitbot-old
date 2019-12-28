@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 import time
-from modules.log.logging import *
+from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 
 
 class Stuff(commands.Cog):
@@ -61,17 +61,17 @@ class Stuff(commands.Cog):
 
         if len(ctx.message.mentions) == 0:
             await ctx.send(embed=embed, delete_after=10)
-            receiver = ctx.message.channel
+            receiver = f'\'{ctx.message.channel}\' in guild \'{ctx.guild}\''
         else:
             user = ctx.message.mentions[0]
             dm = await user.create_dm()
             await dm.send(embed=embed)
-            receiver = user
-        send_log(f'[ Info ] Sent embed \'say_sike\' to \'{receiver}\'')
+            receiver = f'\'{user}\''
+        send_log(f'[ Info ] Sent embed \'say_sike\' to {receiver}')
 
     @commands.command(name='d2_ffs')
     async def d2_ffs(self, ctx):
-        """Sends an embed with the D2 Forsaken parody.
+        """Sends an embed with the Destiny 2 Forsaken parody.
         Syntax:      -d2_ffs [User]
         Parameters:  [User] (optional): Will send the image in a private conversation. If not specified, will send
                                        it to the channel where the command has been invoked.
@@ -88,13 +88,13 @@ class Stuff(commands.Cog):
 
         if len(ctx.message.mentions) == 0:
             await ctx.send(embed=embed)
-            receiver = ctx.message.channel
+            receiver = f'\'{ctx.message.channel}\' in guild \'{ctx.guild}\''
         else:
             user = ctx.message.mentions[0]
             dm = await user.create_dm()
             await dm.send(embed=embed)
-            receiver = user
-        send_log(f'[ Info ] Sent embed \'d2_ffs\' to \'{receiver}\'')
+            receiver = f'\'{user}\''
+        send_log(f'[ Info ] Sent embed \'d2_ffs\' to {receiver}')
 
 
 def setup(bot):

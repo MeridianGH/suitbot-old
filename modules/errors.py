@@ -1,6 +1,7 @@
 from discord.http import Forbidden
 from discord.ext import commands
-from modules.log.logging import *
+import traceback
+from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 
 
 class MoveMembers(commands.CheckFailure):
@@ -35,6 +36,8 @@ class CommandErrorHandler(commands.Cog):
         ignored = (commands.CommandNotFound, commands.UserInputError)
         error = getattr(error, 'original', error)
 
+        log_traceback(error, traceback.format_exc(), ctx.command)
+
         if isinstance(error, ignored):
             return
 
@@ -62,8 +65,6 @@ class CommandErrorHandler(commands.Cog):
             await ctx.send(
                 f'Error executing command `{ctx.command.name}`: {str(error)}. \
                 Please contact {owner.mention} for further assistance.")')
-
-        log_traceback(error, error.__traceback__, ctx.command)
 
 
 def setup(bot):

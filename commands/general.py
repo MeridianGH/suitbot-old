@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from modules.utils import *
-from modules.log.logging import *
+from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 from datetime import datetime
 
 
