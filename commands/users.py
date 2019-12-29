@@ -10,6 +10,9 @@ checks = checks.Checks()
 class Users(commands.Cog):
     """All user related commands.
     """
+    def __init__(self, bot):
+        self.bot = bot
+
     @checks.move_members()
     @commands.command(name='move')
     async def move(self, ctx):
@@ -20,11 +23,17 @@ class Users(commands.Cog):
                                           If no channel name has been specified, all users will be disconnected.
         Permissions: Move Members
         """
-        await ctx.message.delete()
-        args = arg_parse(ctx)
-        channel_text = args[-1]
-        channel = discord.utils.find(lambda x: x.name == channel_text, ctx.message.channel.guild.channels)
-
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+        args = str(ctx.message.content).split(' ')
+        try:
+            channel = self.bot.get_channel(int(args[1]))
+        except TypeError:
+            channel = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+        except IndexError:
+            raise modules.errors.InvalidArguments
         user_list = []
         for user in ctx.message.mentions:
             await user.move_to(channel)
@@ -53,13 +62,23 @@ class Users(commands.Cog):
         Parameters:  [Channel1]: Exact channel name. The channel the users are currently connected to.
                      [Channel2] (optional): Exact channel name. The user(s) will be moved to this channel.
                                            If no channel name has been specified, all users will be disconnected.
+                     If a channel name contains spaces, you have to use the channel ID. To get the ID,
+                     enable Discord's Developer Mode in the appearance settings and right click the channel.
         Permissions: Move Members
         """
-        await ctx.message.delete()
-
-        args = arg_parse(ctx)
-        channel1 = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
-        channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+        args = str(ctx.message.content).split(' ')
+        try:
+            channel1 = self.bot.get_channel(int(args[1]))
+            channel2 = self.bot.get_channel(int(args[2]))
+        except TypeError:
+            channel1 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+            channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+        except IndexError:
+            raise modules.errors.InvalidArguments
 
         user_list = []
         for user in channel1.members:

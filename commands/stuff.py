@@ -1,12 +1,17 @@
 from discord.ext import commands
 import discord
 import time
+import modules.errors
 from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+import random
 
 
 class Stuff(commands.Cog):
     """All fun commands
     """
+    def __init__(self, bot):
+        self.bot = bot
+
     @commands.command(name='shame_on_you')
     async def shame_on_you(self, ctx):
         """Moves the mentioned user out of the channel for five seconds.
@@ -21,7 +26,10 @@ class Stuff(commands.Cog):
             await ctx.message.delete()
         except discord.HTTPException:
             pass
-        user = ctx.message.mentions[0]
+        try:
+            user = ctx.message.mentions[0]
+        except IndexError:
+            raise modules.errors.InvalidArguments
         owner_id = ctx.message.channel.guild.owner_id
 
         if user.id == owner_id and not ctx.message.author.id == owner_id:
@@ -95,6 +103,37 @@ class Stuff(commands.Cog):
             await dm.send(embed=embed)
             receiver = f'\'{user}\''
         send_log(f'[ Info ] Sent embed \'d2_ffs\' to {receiver}')
+
+    @commands.command(name='dice_roll', aliases=['random', 'dice'])
+    async def dice_roll(self, ctx):
+        """Sends a random number between the two parameters given.
+        Syntax:      -dice_roll [Min] [Max], -random [Min] [Max], -dice [Min] [Max]
+        Parameters:  [Min] (optional): The lowest number that can be rolled. Defaults to 1.
+                     [Max] (optional): The highest number that can be rolled. Defaults to 6.
+        Permissions: None
+        """
+        emojis = {'1': '1\u20e3', '2': '2\u20e3', '3': '3\u20e3', '4': '4\u20e3', '5': '5\u20e3',
+                  '6': '6\u20e3', '7': '7\u20e3', '8': '8\u20e3', '9': '9\u20e3', '0': '0\u20e3'}
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+        args = str(ctx.message.content).split(' ')
+        try:
+            minimum = int(args[1])
+        except IndexError:
+            minimum = 1
+        try:
+            maximum = int(args[2])
+        except IndexError:
+            maximum = 6
+        roll = str(random.randint(minimum, maximum))
+        message = []
+        for num in roll:
+            print(num)
+            message.append(emojis[num])
+        message = ''.join(message)
+        await ctx.send(message)
 
 
 def setup(bot):

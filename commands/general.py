@@ -74,11 +74,13 @@ class General(commands.Cog):
             await ctx.message.delete()
         except discord.HTTPException:
             pass
-        args = arg_parse(ctx)
+        args = str(ctx.message.content).split(' ')
         try:
-            deleted = await ctx.message.channel.purge(limit=int(args[0]))
+            deleted = await ctx.message.channel.purge(limit=int(args[1]))
         except discord.HTTPException:
             deleted = 0
+        except IndexError:
+            raise modules.errors.InvalidArguments
         if len(deleted) == 0:
             return
         elif len(deleted) == 1:

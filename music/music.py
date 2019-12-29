@@ -9,6 +9,7 @@ import wavelink
 from discord.ext import commands
 from typing import Union
 import humanize
+import modules.errors
 from modules.log.logging import get_log_path, get_time, send_log, log_traceback
 
 RURL = re.compile(r'https?:\/\/(?:www\.)?.+')
@@ -302,7 +303,7 @@ class Music(commands.Cog):
             try:
                 channel = ctx.author.voice.channel
             except AttributeError:
-                raise discord.DiscordException('No channel to join. Please either specify a valid channel or join one.')
+                raise modules.errors.MissingChannel
 
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
@@ -401,7 +402,7 @@ class Music(commands.Cog):
             return
 
         if not player.is_connected:
-            await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         if player.paused:
             return
@@ -429,7 +430,7 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         if not player.paused:
             return
@@ -456,7 +457,7 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            return await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         send_log(f'[ Info ] Skipped a song in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has skipped the song!', delete_after=10)
@@ -481,7 +482,7 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            return await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         send_log(f'[ Info ] Stopped the player in guild \'{ctx.guild.name}\'.')
         await ctx.send(f'{ctx.author.mention} has stopped the player.', delete_after=10)
@@ -507,7 +508,7 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            return await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         if not 0 <= value <= 100:
             return await ctx.send('Please enter a value between 0 and 100.')
@@ -534,7 +535,7 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            return await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         upcoming = list(itertools.islice(player.entries, 0, 10))
 
@@ -561,7 +562,7 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
 
         if not player.is_connected:
-            return await ctx.send('I am not currently connected to voice!')
+            raise modules.errors.NotConnected
 
         if len(player.entries) < 3:
             return await ctx.send('Please add more songs to the queue before trying to shuffle.', delete_after=10)

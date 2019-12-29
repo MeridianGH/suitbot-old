@@ -2,6 +2,7 @@ from discord.http import Forbidden
 from discord.ext import commands
 import traceback
 from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from yandex_translate import YandexTranslateException
 
 
 class MoveMembers(commands.CheckFailure):
@@ -36,8 +37,6 @@ class CommandErrorHandler(commands.Cog):
         ignored = (commands.CommandNotFound, commands.UserInputError)
         error = getattr(error, 'original', error)
 
-        log_traceback(error, traceback.format_exc(), ctx.command)
-
         if isinstance(error, ignored):
             return
 
@@ -57,6 +56,10 @@ class CommandErrorHandler(commands.Cog):
             send_log(f'[Error ] The client is not connected to a voice channel in \'{ctx.guild.name}\'.')
             return await ctx.send('The client is not connected to a voice channel in this server.')
 
+        elif isinstance(error, YandexTranslateException):
+            send_log(f'[Error ] Failed to get response from YandexTranslate.')
+            return await ctx.send('Failed to get response from https://translate.yandex.com.')
+
         elif isinstance(error, Forbidden):
             send_log(f'[Error ] HTTP error: Can\'t make API call for command {ctx.command}.')
 
@@ -65,6 +68,9 @@ class CommandErrorHandler(commands.Cog):
             await ctx.send(
                 f'Error executing command `{ctx.command.name}`: {str(error)}. \
                 Please contact {owner.mention} for further assistance.")')
+
+        else:
+            log_traceback(traceback.format_exception(type(error), error, error.__traceback__), ctx.command)
 
 
 def setup(bot):

@@ -29,13 +29,13 @@ def send_log(string, time=True, prnt=True):
         return f'{time}{string}'
 
 
-def log_traceback(error, traceback, command):
+def log_traceback(traceback, command):
     time = get_time()
     clean_time = time.replace(':', '_')
     file_name = f'traceback_{clean_time}'
     with open(f'{get_log_path()}/tracebacks/{file_name}', 'a') as log:
-        log.write(f'{error}\n')
-        log.write(f'{traceback}\n')
+        for line in traceback:
+            log.write(line)
     return send_log(f'[Error ] Ignoring exception in command \'{command}\'.')
 
 
