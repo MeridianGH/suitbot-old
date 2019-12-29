@@ -15,7 +15,7 @@ and [WaveLink](https://github.com/PythonistaGuild/Wavelink) to play music.
 ## How to use
 
 Currently this bot is not available for public use.
-I plan to host it on a server running 24/7 and make it public, but that will take a while.
+I am hosting it 24/7 on my private server, but the bot itself is not in a state that it can be used publicly.
 
 ## Commands
 
