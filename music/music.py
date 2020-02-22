@@ -312,7 +312,7 @@ class Music(commands.Cog):
                 return
 
         await player.connect(channel.id)
-        send_log(f'[ Info ] Connected to channel \'{ctx.guild.me.voice.channel}\' in guild \'{ctx.guild.name}\'.')
+        send_log(f'[ Info ] Connected to channel \'{channel}\' in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='play')
     async def play(self, ctx, *, query: str):
@@ -350,15 +350,15 @@ class Music(commands.Cog):
             for t in tracks.tracks:
                 await player.queue.put(Track(t.id, t.info, ctx=ctx))
 
-            await ctx.send(f'```ini\nAdded the playlist {tracks.data["playlistInfo"]["name"]}'
+            await ctx.send(f'```ini\nAdded the playlist \'{tracks.data["playlistInfo"]["name"]}\''
                            f' with {len(tracks.tracks)} songs to the queue.\n```')
-            send_log(f'[ Info ] Added the playlist {tracks.data["playlistInfo"]["name"]} '
+            send_log(f'[ Info ] Added the playlist \'{tracks.data["playlistInfo"]["name"]}\' '
                      f'to the queue in guild \'{ctx.guild.name}\'.')
         else:
             track = tracks[0]
-            await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=10)
+            await ctx.send(f'```ini\nAdded \'{track.title}\' to the Queue\n```', delete_after=10)
             await player.queue.put(Track(track.id, track.info, ctx=ctx))
-            send_log(f'[ Info ] Added track {track.title} to the queue in guild \'{ctx.guild.name}\'.')
+            send_log(f'[ Info ] Added track \'{track.title}\' to the queue in guild \'{ctx.guild.name}\'.')
 
         if player.controller_message and player.is_playing:
             await player.invoke_controller()

@@ -32,7 +32,7 @@ def send_log(string, time=True, prnt=True):
 def log_traceback(traceback, command):
     time = get_time()
     clean_time = time.replace(':', '_')
-    file_name = f'traceback_{clean_time}'
+    file_name = f'traceback_{clean_time}.txt'
     with open(f'{get_log_path()}/tracebacks/{file_name}', 'a') as log:
         for line in traceback:
             log.write(line)

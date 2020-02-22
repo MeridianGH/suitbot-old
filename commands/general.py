@@ -60,7 +60,7 @@ class General(commands.Cog):
             pass
 
         uptime_seconds = round((datetime.now() - self.start_time).total_seconds())
-        send_log(f'Current Uptime: {format_seconds(uptime_seconds)}')
+        send_log(f'[ Info ]Current Uptime: {format_seconds(uptime_seconds)}')
         await ctx.send(f'Current Uptime: {format_seconds(uptime_seconds)}', delete_after=10)
 
     @commands.command(name='clear')

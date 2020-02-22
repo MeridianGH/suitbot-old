@@ -30,7 +30,7 @@ class Users(commands.Cog):
         args = str(ctx.message.content).split(' ')
         try:
             channel = self.bot.get_channel(int(args[1]))
-        except TypeError:
+        except TypeError or ValueError:
             channel = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
         except IndexError:
             raise modules.errors.InvalidArguments
