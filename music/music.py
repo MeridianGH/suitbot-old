@@ -10,7 +10,8 @@ from discord.ext import commands
 from typing import Union
 import humanize
 import modules.errors
-from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from modules.utils import *
+from modules.log.logging import send_log
 
 RURL = re.compile(r'https?:\/\/(?:www\.)?.+')
 
@@ -80,7 +81,7 @@ class Player(wavelink.Player):
     async def player_loop(self):
         await self.bot.wait_until_ready()
 
-        await self.set_preq('Flat')
+        await self.set_eq(wavelink.Equalizer.flat())
         # We can do any pre loop prep here...
         await self.set_volume(self.volume)
 
@@ -252,7 +253,7 @@ class Music(commands.Cog):
         self.bot = bot
 
         if not hasattr(bot, 'wavelink'):
-            self.bot.wavelink = wavelink.Client(bot)
+            self.bot.wavelink = wavelink.Client(bot=bot)
 
         bot.loop.create_task(self.initiate_nodes())
 
@@ -676,8 +677,8 @@ class Music(commands.Cog):
               f'`{node.stats.playing_players}` players are playing on server.\n\n' \
               f'Server Memory: `{used}/{total}` | `({free} free)`\n' \
               f'Server CPU: `{cpu}`\n\n' \
-              f'Server Uptime: `{datetime.timedelta(milliseconds=node.stats.uptime)}`'
-        await ctx.send(fmt)
+              f'Server Uptime: `{datetime.timedelta(milliseconds=node.stats.uptime)}`\n'
+        await ctx.send(fmt, delete_after=10)
         send_log(f'[ Info ] Sent WaveLink info to channel \'{ctx.message.channel}\' in guild \'{ctx.guild.name}\'.')
 
 

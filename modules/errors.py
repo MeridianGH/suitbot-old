@@ -1,13 +1,19 @@
 from discord.http import Forbidden
 from discord.ext import commands
 import traceback
-from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from modules.log.logging import send_log, log_traceback
 from yandex_translate import YandexTranslateException
 
 
-class MoveMembers(commands.CheckFailure):
-    """Missing Permission: Move Members"""
-    pass
+class MissingPermission(commands.CheckFailure):
+    """Missing Permission"""
+    message = None
+
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = 'You should not see this...'
 
 
 class InvalidArguments(commands.CommandError):
@@ -40,9 +46,11 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, ignored):
             return
 
-        elif isinstance(error, MoveMembers):
-            send_log(f'[Error ] Invalid permission: \'{ctx.author}\' tried to use \'{ctx.command}\'')
-            return await ctx.send('You are missing these permissions: Move Members')
+        elif isinstance(error, MissingPermission):
+            permission = MissingPermission.message
+            send_log(f'[Error ] Invalid permission: \'{ctx.author}\' tried to use \'{ctx.command}\' without permission '
+                     f'{permission}')
+            return await ctx.send(f'You are missing these permissions: {permission}')
 
         elif isinstance(error, InvalidArguments):
             send_log(f'[Error ] No or invalid arguments in command \'{ctx.command}\' specified.')

@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from modules.utils import *
-from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from modules.log.logging import send_log
 from datetime import datetime
 
 
@@ -28,8 +28,6 @@ class General(commands.Cog):
         self.start_time = datetime.now()
         self.bot.help_command.cog = self
         # self._original_help_command = bot.help_command
-        # bot.help_command = MyHelpCommand()
-        # bot.help_command.cog = self
 
     @commands.command(name='ping')
     async def ping(self, ctx):
@@ -60,7 +58,7 @@ class General(commands.Cog):
             pass
 
         uptime_seconds = round((datetime.now() - self.start_time).total_seconds())
-        send_log(f'[ Info ]Current Uptime: {format_seconds(uptime_seconds)}')
+        send_log(f'[ Info ] Current Uptime: {format_seconds(uptime_seconds)}')
         await ctx.send(f'Current Uptime: {format_seconds(uptime_seconds)}', delete_after=10)
 
     @commands.command(name='clear')
@@ -87,8 +85,9 @@ class General(commands.Cog):
             msg_text = 'message'
         else:
             msg_text = 'messages'
-        send_log(f'[ Info ] Deleted {len(deleted)} {msg_text} in #{ctx.message.channel}')
-        await ctx.send(f'Deleted {len(deleted)} {msg_text}', delete_after=10)
+        send_log(f'[ Info ] Deleted {len(deleted)} {msg_text} in #{ctx.message.channel} in guild '
+                 f'\'{ctx.message.guild}\'.')
+        await ctx.send(f'Deleted {len(deleted)} {msg_text}.', delete_after=10)
 
 
 def setup(bot):

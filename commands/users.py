@@ -1,6 +1,6 @@
 from modules.utils import *
 import modules.checks as checks
-from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from modules.log.logging import send_log
 import discord
 from discord.ext import commands
 

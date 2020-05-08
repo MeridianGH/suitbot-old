@@ -3,7 +3,7 @@ from discord.ext import commands
 import discord
 import sys
 import os
-from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from modules.log.logging import get_time, send_log
 
 
 def resource_path(relative_path):
@@ -21,7 +21,7 @@ bot = commands.Bot(command_prefix='-')
 
 maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]
 normal = [discord.Activity(type=discord.ActivityType.playing, name='\'-help\' for info.'), discord.Status.online]
-mode = normal
+mode = maintenance
 
 
 @bot.event

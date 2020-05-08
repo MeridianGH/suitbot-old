@@ -9,5 +9,14 @@ class Checks:
             if ctx.message.author.guild_permissions.move_members:
                 return True
             else:
-                raise errors.MoveMembers()
+                raise errors.MissingPermission('Move Members')
+        return commands.check(predicate)
+
+    @staticmethod
+    def manage_messages():
+        def predicate(ctx):
+            if ctx.message.author.guild_permissions.manage_messages:
+                return True
+            else:
+                raise errors.MissingPermission('Manage Messages')
         return commands.check(predicate)

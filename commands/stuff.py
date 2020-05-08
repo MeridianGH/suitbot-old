@@ -2,8 +2,11 @@ from discord.ext import commands
 import discord
 import time
 import modules.errors
-from modules.log.logging import get_log_path, get_time, send_log, log_traceback
+from modules.log.logging import send_log
 import random
+import modules.checks as checks
+
+checks = checks.Checks()
 
 
 class Stuff(commands.Cog):
@@ -12,6 +15,7 @@ class Stuff(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @checks.move_members()
     @commands.command(name='shame_on_you')
     async def shame_on_you(self, ctx):
         """Moves the mentioned user out of the channel for five seconds.
