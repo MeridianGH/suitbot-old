@@ -128,3 +128,4 @@ dmypy.json
 exe/
 # Lavalink/Wavelink files
 music/wavelink/
+run.sh

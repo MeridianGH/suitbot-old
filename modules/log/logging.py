@@ -9,7 +9,7 @@ def get_log_path():
         userprofile = os.getenv('UserProfile')
         return f'{userprofile}/Documents/GitHub/suitbot/modules/log'
     elif sys.platform.startswith('linux'):
-        return '/home/pi/bots/suitbot/modules/log'
+        return '/home/pi/suitbot/modules/log'
     else:
         return None
 

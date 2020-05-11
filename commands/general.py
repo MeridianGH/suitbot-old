@@ -89,6 +89,21 @@ class General(commands.Cog):
                  f'\'{ctx.message.guild}\'.')
         await ctx.send(f'Deleted {len(deleted)} {msg_text}.', delete_after=10)
 
+    @commands.command(name='github', aliases=['gh', 'source'])
+    async def github(self, ctx):
+        """Sends the GitHub link to the source code of the bot.
+        Syntax:      -github, -gh, -source
+        Parameters:  None
+        Permissions: None
+        """
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+        embed = discord.Embed(color=0xff0000)
+        embed.add_field(name='GitHub:', value='[github.com/MeridianPY/suitbot](https://github.com/MeridianPY/suitbot)')
+        await ctx.send(embed=embed, delete_after=10)
+
 
 def setup(bot):
     bot.add_cog(General(bot))

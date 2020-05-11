@@ -12,7 +12,7 @@ def resource_path(relative_path):
 
 
 def start_lavalink():
-    lavalink = subprocess.Popen(['java', '-jar', 'Lavalink.jar'], stdout=subprocess.PIPE)
+    lavalink = subprocess.Popen(['java', '-jar', 'Lavalink.jar'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     while True:
         line = str(lavalink.stdout.readline())
         if 'Started Launcher' in line:

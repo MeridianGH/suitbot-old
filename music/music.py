@@ -115,7 +115,7 @@ class Player(wavelink.Player):
 
         embed = discord.Embed(title='Music Controller',
                               description=f'Now Playing:\n[{track.title}]({track.uri})',
-                              colour=0xff0000)
+                              color=0xff0000)
         embed.set_thumbnail(url=track.thumb)
 
         if track.is_stream:
@@ -318,8 +318,8 @@ class Music(commands.Cog):
     @commands.command(name='play')
     async def play(self, ctx, *, query: str):
         """Queue a song or playlist for playback.
-        Syntax:      -play [Query]
-        Parameters:  [Query]: Can be a YouTube link or a search query.
+        Syntax:      -play <query>
+        Parameters:  <query>: Can be a YouTube link or a search query.
         Permissions: None
         """
         try:
@@ -495,11 +495,39 @@ class Music(commands.Cog):
         await player.destroy_controller()
         await player.disconnect()
 
+    @commands.command(name='seek')
+    async def seek(self, ctx, *, position: str):
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+
+        player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player)
+
+        if not player.is_connected:
+            raise modules.errors.NotConnected
+
+        try:
+            h, m, s = position.split(':')
+        except ValueError:
+            try:
+                h = 0
+                m, s = position.split(':')
+            except ValueError:
+                h, m = 0, 0
+                s = position
+
+        sec = int(h) * 3600 + int(m) * 60 + int(s)
+
+        await player.seek(sec)
+        await ctx.send(f'Set the position to **{h}:{m}:{s}**.')
+        send_log(f'[ Info ] Set the position to {h}:{m}:{s} in guild \'{ctx.guild.name}\'.')
+
     @commands.command(name='volume', aliases=['vol', 'v'])
-    async def volume(self, ctx, *, value: int):
+    async def volume(self, ctx, *, volume: int):
         """Change the player volume.
-        Syntax:      -volume [Volume], -vol [Volume], -v [Volume]
-        Parameters:  [Volume]: The percent to set the volume to.
+        Syntax:      -volume <volume>, -vol <volume>, -v <volume>
+        Parameters:  <volume>: The percent to set the volume to.
         Permissions: None
         """
         try:
@@ -511,16 +539,16 @@ class Music(commands.Cog):
         if not player.is_connected:
             raise modules.errors.NotConnected
 
-        if not 0 <= value <= 100:
+        if not 0 <= volume <= 100:
             return await ctx.send('Please enter a value between 0 and 100.')
 
-        await player.set_volume(value)
-        await ctx.send(f'Volume set to **{value}**%!', delete_after=10)
+        await player.set_volume(volume)
+        await ctx.send(f'Volume set to **{volume}**%!', delete_after=10)
 
         if not player.updating and not player.update:
             await player.invoke_controller()
 
-        send_log(f'[ Info ] Set the volume to {value}% in guild \'{ctx.guild.name}\'.')
+        send_log(f'[ Info ] Set the volume to {volume}% in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='queue', aliases=['q'])
     async def queue(self, ctx):
