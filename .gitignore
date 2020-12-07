@@ -126,6 +126,11 @@ dmypy.json
 
 # Folder with files for distribution
 exe/
-# Lavalink/Wavelink files
-music/wavelink/
-run.sh
+
+# Tracebacks and logs
+/modules/log/tracebacks/
+/music/wavelink/logs/
+/modules/log/log.txt
+
+# Deprecated code and files
+/deprecated/
