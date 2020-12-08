@@ -29,9 +29,9 @@ class Users(commands.Cog):
             pass
         args = str(ctx.message.content).split(' ')
         try:
-            channel = self.bot.get_channel(int(args[1]))
+            channel = self.bot.get_channel(int(args[-1]))
         except TypeError or ValueError:
-            channel = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+            channel = discord.utils.find(lambda x: x.name == args[-1], ctx.message.channel.guild.channels)
         except IndexError:
             raise modules.errors.InvalidArguments
         user_list = []

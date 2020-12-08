@@ -17,11 +17,13 @@ token = os.getenv('DISCORD_TOKEN')
 
 startup_extensions = ['commands.general', 'commands.users', 'commands.stuff', 'commands.translating',
                       'modules.errors', 'music.music']
-bot = commands.Bot(command_prefix='-')
+intents = discord.Intents.default()
+intents.members = True
+bot = commands.Bot(command_prefix='-', intents=intents)
 
 maintenance = [discord.Activity(type=discord.ActivityType.playing, name='Maintenance'), discord.Status.dnd]
 normal = [discord.Activity(type=discord.ActivityType.playing, name='\'-help\' for info.'), discord.Status.online]
-mode = maintenance
+mode = normal
 
 
 @bot.event

@@ -18,7 +18,7 @@ def start_lavalink():
         if 'Started Launcher' in line:
             send_log(f'[Status] Successfully started music server \'WaveLink\'')
             return True
-        elif 'FAILED' in line:
+        elif 'FAILED' in line or 'failed' in line:
             send_log(f'[Error ] Failed to start music server \'WaveLink\'.')
             send_log(f'     ->    [ Info ] Music commands might not work!', time=False)
             return False

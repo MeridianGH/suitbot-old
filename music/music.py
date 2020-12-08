@@ -318,8 +318,8 @@ class Music(commands.Cog):
     @commands.command(name='play')
     async def play(self, ctx, *, query: str):
         """Queue a song or playlist for playback.
-        Syntax:      -play <query>
-        Parameters:  <query>: Can be a YouTube link or a search query.
+        Syntax:      -play [query]
+        Parameters:  [query]: Can be a YouTube link or a search query.
         Permissions: None
         """
         try:
@@ -497,6 +497,11 @@ class Music(commands.Cog):
 
     @commands.command(name='seek')
     async def seek(self, ctx, *, position: str):
+        """Seek to a specific position in the currently playing song.
+        Syntax:      -seek [position]
+        Parameters:  [position]: Can be in hh:mm:ss, mm:ss or ss format.
+        Permissions: None
+        """
         try:
             await ctx.message.delete()
         except discord.HTTPException:
@@ -517,7 +522,7 @@ class Music(commands.Cog):
                 h, m = 0, 0
                 s = position
 
-        sec = int(h) * 3600 + int(m) * 60 + int(s)
+        sec = (int(h) * 3600 + int(m) * 60 + int(s)) * 1000
 
         await player.seek(sec)
         await ctx.send(f'Set the position to **{h}:{m}:{s}**.')
