@@ -336,10 +336,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await ctx.send('Disconnected.', delete_after=10)
         send_log(f'[ Info ] Disconnected from channel in guild \'{ctx.guild.name}\'.')
 
-    @commands.command(name='play')
+    @commands.command(name='play', aliases=['p'])
     async def play(self, ctx, *, query: t.Optional[str]):
         """Searches for a song, takes the best match and starts playback.
-        Syntax:      -play [query]
+        Syntax:      -play [query], -p [query]
         Parameters:  [query]: String to search for.
         Permissions: None
         """
@@ -374,10 +374,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         elif isinstance(exc, NoVoiceChannel):
             await ctx.send('No suitable voice channel was provided.', delete_after=10)
 
-    @commands.command(name='search')
+    @commands.command(name='search', aliases=['s'])
     async def search(self, ctx, *, query: t.Optional[str]):
         """Searches for a song, gives five options to choose and starts playback.
-        Syntax:      -search [query]
+        Syntax:      -search [query], -s [query]
         Parameters:  [query]: String to search for.
         Permissions: None
         """
@@ -588,12 +588,29 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             value=getattr(player.queue.current_track, 'title', 'No tracks currently playing.'),
             inline=False
         )
-        if upcoming := player.queue.upcoming:
-            embed.add_field(
-                name='Next up:',
-                value='\n'.join(t.title for t in upcoming[:show]),
-                inline=False
-            )
+
+        if player.queue.upcoming:
+            queue = '\n'.join(t.title for t in player.queue.upcoming[:show])
+
+            if len(queue) >= 5500:
+                embed = discord.Embed(title='Can\'t show this many entries, please use a limit:',
+                                      description='-queue [limit]')
+            else:
+                entries = iter(queue.split('\n'))
+                fields, current = [], next(entries)
+                for entry in entries:
+                    if len(current) + 1 + len(entry) > 1024:
+                        fields.append(current)
+                        current = entry
+                    else:
+                        current += '\n' + entry
+                fields.append(current)
+                for i in range(len(fields)):
+                    embed.add_field(
+                        name=f'Queue ({i + 1}):',
+                        value=fields[i],
+                        inline=False
+                    )
 
         await ctx.send(embed=embed, delete_after=10)
         send_log(f'[ Info ] Sent queue in guild \'{ctx.guild.name}\'.')

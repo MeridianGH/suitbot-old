@@ -97,7 +97,7 @@ class Users(commands.Cog):
             else:
                 response = f'Moved ({user_list_string}) from \'{channel1}\' to \'{channel2}\'.'
 
-        await ctx.send(response)
+        await ctx.send(response, delete_after=10)
         send_log(f'[ Info ] {response}')
 
     # @checks.move_members()

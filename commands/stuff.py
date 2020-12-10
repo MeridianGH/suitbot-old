@@ -16,14 +16,15 @@ class Stuff(commands.Cog):
         self.bot = bot
 
     @checks.move_members()
-    @commands.command(name='shame_on_you')
+    @commands.command(name='shame_on_you', aliases=['shame', 'yeet'])
     async def shame_on_you(self, ctx):
         """Moves the mentioned user out of the channel for five seconds.
-        Syntax:      -shame_on_you [User]
+        Syntax:      -shame_on_you [User], -shame [User], -yeet [User]
         Parameters:  [User]: Mention the user like this: @User
         Permissions: Move Members
 
-        The user will be moved to a different channel and moved back after five seconds.
+        The user will be moved to the AFK channel (or a channel called AFK, or a random one if nothing is found)
+        and moved back after five seconds.
         He should contemplate his life choices.
         """
         try:
@@ -34,25 +35,24 @@ class Stuff(commands.Cog):
             user = ctx.message.mentions[0]
         except IndexError:
             raise modules.errors.InvalidArguments
-        owner_id = ctx.message.channel.guild.owner_id
 
-        if user.id == owner_id and not ctx.message.author.id == owner_id:
-            embed = discord.Embed()
-            embed.set_image(url='https://i.kym-cdn.com/entries/icons/original/000/030/414/plant.jpg')
-            embed.set_footer(text='say sike right now')
-            await ctx.send(embed=embed)
+        old_channel = user.voice.channel
+        if ctx.guild.afk_channel:
+            new_channel = ctx.guild.afk_channel
+        elif discord.utils.find(lambda x: x.name == 'AFK', ctx.guild.voice_channels):
+            new_channel = discord.utils.find(lambda x: x.name == 'AFK', ctx.guild.voice_channels)
         else:
-            old_channel = user.voice.channel
-            new_channel = discord.utils.find(lambda x: x.name == 'Schäm-Dich-Ecke', ctx.message.channel.guild.channels)
-            response = f'Schäm dich, {user.mention}!'
-            dm = await user.create_dm()
+            new_channel = random.choice(ctx.guild.voice_channels)
+            while new_channel.name == old_channel.name:
+                new_channel = random.choice(ctx.guild.voice_channels)
 
-            await user.move_to(new_channel)
-            await ctx.send(response)
-            await dm.send(content=response)
-            time.sleep(5.0)
-            await user.move_to(old_channel)
-            send_log(f'[ Info ] Used \'shame_on_you\' on {user}.')
+        await ctx.send(f'Shame on you, {user.mention}!')
+
+        await user.move_to(new_channel)
+        time.sleep(5.0)
+        await user.move_to(old_channel)
+
+        send_log(f'[ Info ] Used \'shame_on_you\' on {user} in guild \'{ctx.guild}\'.')
 
     @commands.command(name='say_sike')
     async def say_sike(self, ctx):
@@ -134,10 +134,10 @@ class Stuff(commands.Cog):
         roll = str(random.randint(minimum, maximum))
         message = []
         for num in roll:
-            print(num)
             message.append(emojis[num])
         message = ''.join(message)
         await ctx.send(message)
+        send_log(f'[ Info ] Sent dice roll to \'{ctx.guild}\'')
 
 
 def setup(bot):

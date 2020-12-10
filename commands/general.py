@@ -89,10 +89,10 @@ class General(commands.Cog):
                  f'\'{ctx.message.guild}\'.')
         await ctx.send(f'Deleted {len(deleted)} {msg_text}.', delete_after=10)
 
-    @commands.command(name='github', aliases=['gh', 'source'])
+    @commands.command(name='github', aliases=['gh', 'source', 'repo'])
     async def github(self, ctx):
         """Sends the GitHub link to the source code of the bot.
-        Syntax:      -github, -gh, -source
+        Syntax:      -github, -gh, -source, -repo
         Parameters:  None
         Permissions: None
         """
