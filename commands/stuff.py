@@ -53,7 +53,7 @@ class Stuff(commands.Cog):
                 while new_channel.name == old_channel.name:
                     new_channel = random.choice(ctx.guild.voice_channels)
 
-            await ctx.send(f'Shame on you, {user.mention}!')
+            await ctx.send(f'Shame on you, {user.mention}!', delete_after=10)
 
             await user.move_to(new_channel)
             time.sleep(5.0)
