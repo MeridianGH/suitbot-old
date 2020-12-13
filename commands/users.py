@@ -31,7 +31,7 @@ class Users(commands.Cog):
         try:
             channel = self.bot.get_channel(int(args[-1]))
         except TypeError or ValueError:
-            channel = discord.utils.find(lambda x: x.name == args[-1], ctx.message.channel.guild.channels)
+            channel = discord.utils.find(lambda x: x.name == args[-1], ctx.message.guild.channels)
         except IndexError:
             raise modules.error_classes.InvalidArguments
         user_list = []
@@ -47,12 +47,12 @@ class Users(commands.Cog):
                 response = f'[ Info ] ({user_list_string}) have been sent to oblivion.'
         else:
             if len(user_list) == 1:
-                response = f'Moved \'{user_list_string}\' to \'{channel}\'.'
+                response = f'Moved \'{user_list_string}\' to \'{channel}\''
             else:
-                response = f'Moved ({user_list_string}) to \'{channel}\'.'
+                response = f'Moved ({user_list_string}) to \'{channel}\''
 
-        await ctx.send(response)
-        send_log(f'[ Info ] {response}')
+        await ctx.send(response + '.', delete_after=10)
+        send_log(f'[ Info ] {response} in guild \'{ctx.message.guild}\'.')
 
     @checks.move_members()
     @commands.command(name='move_all')
@@ -75,8 +75,8 @@ class Users(commands.Cog):
             channel1 = self.bot.get_channel(int(args[1]))
             channel2 = self.bot.get_channel(int(args[2]))
         except TypeError:
-            channel1 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
-            channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
+            channel1 = discord.utils.find(lambda x: x.name == args[1], ctx.message.guild.channels)
+            channel2 = discord.utils.find(lambda x: x.name == args[2], ctx.message.guild.channels)
         except IndexError:
             raise modules.error_classes.InvalidArguments
 
@@ -93,28 +93,52 @@ class Users(commands.Cog):
                 response = f'({user_list_string}) have been sent to oblivion.'
         else:
             if len(user_list) == 1:
-                response = f'Moved \'{user_list_string}\' from \'{channel1}\' to \'{channel2}\'.'
+                response = f'Moved \'{user_list_string}\' from \'{channel1}\' to \'{channel2}\''
             else:
-                response = f'Moved ({user_list_string}) from \'{channel1}\' to \'{channel2}\'.'
+                response = f'Moved ({user_list_string}) from \'{channel1}\' to \'{channel2}\''
 
-        await ctx.send(response, delete_after=10)
-        send_log(f'[ Info ] {response}')
+        await ctx.send(response + '.', delete_after=10)
+        send_log(f'[ Info ] {response} in guild \'{ctx.message.guild}\'.')
 
-    # @checks.move_members()
-    # @commands.command(name='move_all_guild')
-    # async def move_all_guild(self, ctx):
-    #     """Moves every user in the entire server to one channel.
-    #     Syntax:      -move_all_guild [Channel1]
-    #     Parameters:  [Channel1]: Exact channel name. The user(s) will be moved to this channel.
-    #     Permissions: Move Members
-    #     """
-    #     await ctx.message.delete()
-    #     args = arg_parse(ctx)
-    #     channel = discord.utils.find(lambda x: x.name == args[0], ctx.message.channel.guild.channels)
-    #
-    #     for ch in ctx.message.channel.guild.voice_channels:
-    #         for user in ch.members:
-    #             await user.move_to(channel)
+    @checks.move_members()
+    @checks.manage_channels()
+    @commands.command(name='move_all_guild')
+    async def move_all_guild(self, ctx):
+        """Moves every user in the entire server to one channel.
+        Syntax:      -move_all_guild [Channel]
+        Parameters:  [Channel]: Exact channel name or ID. The user(s) will be moved to this channel.
+        Permissions: Move Members, Manage Channels
+        """
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+
+        args = str(ctx.message.content).split(' ')
+        try:
+            channel = self.bot.get_channel(int(args[1]))
+        except TypeError:
+            channel = discord.utils.find(lambda x: x.name == args[1], ctx.message.guild.channels)
+        except IndexError:
+            raise modules.error_classes.InvalidArguments
+
+        if channel is None:
+            raise modules.error_classes.InvalidArguments
+
+        user_list = []
+        for ch in ctx.message.guild.voice_channels:
+            for user in ch.members:
+                await user.move_to(channel)
+                user_list.append(user.name)
+        user_list_string = ', '.join(user_list)
+
+        if len(user_list) == 1:
+            response = f'Moved \'{user_list_string}\' from the entire server to \'{channel}\''
+        else:
+            response = f'Moved ({user_list_string}) from the entire server to \'{channel}\''
+
+        await ctx.send(response + '.', delete_after=10)
+        send_log(f'[ Info ] {response} in guild \'{ctx.message.guild}\'.')
 
 
 def setup(bot):

@@ -20,3 +20,13 @@ class Checks:
             else:
                 raise errors.MissingPermission('Manage Messages')
         return commands.check(predicate)
+
+    @staticmethod
+    def manage_channels():
+        def predicate(ctx):
+            if ctx.message.author.guild_permissions.manage_channels:
+                return True
+            else:
+                raise errors.MissingPermission('Manage Channels')
+        return commands.check(predicate)
+
