@@ -9,7 +9,7 @@ import discord
 import wavelink
 from discord.ext import commands
 
-import modules.errors
+import modules.error_classes
 from modules.utils import *
 from modules.log.logging import send_log
 
@@ -672,7 +672,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player = self.get_player(ctx)
 
         if not player.is_connected:
-            raise modules.errors.NotConnected
+            raise modules.error_classes.NotConnected
 
         try:
             h, m, s = position.split(':')
@@ -705,7 +705,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player = self.get_player(ctx)
 
         if not player.is_connected:
-            raise modules.errors.NotConnected
+            raise modules.error_classes.NotConnected
 
         if not 0 <= volume <= 100:
             return await ctx.send('Please enter a value between 0 and 100.', delete_after=10)

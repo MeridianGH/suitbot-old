@@ -78,7 +78,7 @@ class General(commands.Cog):
         except discord.HTTPException:
             deleted = 0
         except IndexError:
-            raise modules.errors.InvalidArguments
+            raise modules.error_classes.InvalidArguments
         if len(deleted) == 0:
             return
         elif len(deleted) == 1:

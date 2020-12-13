@@ -1,10 +1,10 @@
-import modules.errors
+import modules.error_classes
 
 
 def arg_parse(ctx):
     args = ctx.message.content.split()[1:]
     if len(args) < 1:
-        raise modules.errors.InvalidArguments
+        raise modules.error_classes.InvalidArguments
     for index, arg in enumerate(args):
         if len(arg) < 2:
             args[index - 1:index + 1] = [' '.join(args[index - 1:index + 1])]

@@ -1,5 +1,5 @@
 from discord.ext import commands
-import modules.errors as errors
+import modules.error_classes as errors
 
 
 class Checks:

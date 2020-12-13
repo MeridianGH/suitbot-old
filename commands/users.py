@@ -33,7 +33,7 @@ class Users(commands.Cog):
         except TypeError or ValueError:
             channel = discord.utils.find(lambda x: x.name == args[-1], ctx.message.channel.guild.channels)
         except IndexError:
-            raise modules.errors.InvalidArguments
+            raise modules.error_classes.InvalidArguments
         user_list = []
         for user in ctx.message.mentions:
             await user.move_to(channel)
@@ -78,7 +78,7 @@ class Users(commands.Cog):
             channel1 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
             channel2 = discord.utils.find(lambda x: x.name == args[1], ctx.message.channel.guild.channels)
         except IndexError:
-            raise modules.errors.InvalidArguments
+            raise modules.error_classes.InvalidArguments
 
         user_list = []
         for user in channel1.members:
