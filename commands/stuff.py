@@ -65,7 +65,7 @@ class Stuff(commands.Cog):
 
     @commands.command(name='say_sike')
     async def say_sike(self, ctx):
-        """Sends an embed with the famous piranha plant.
+        """Sends an image of a piranha plant.
         Syntax:      -say_sike [User]
         Parameters:  [User] (optional): Will send the image in a private conversation. If not specified, will send
                                        it to the channel where the command has been invoked.
@@ -90,10 +90,10 @@ class Stuff(commands.Cog):
             receiver = f'\'{user}\''
         send_log(f'[ Info ] Sent embed \'say_sike\' to {receiver}')
 
-    @commands.command(name='d2_ffs')
+    @commands.command(name='d2_ffs', aliases=['ffs'])
     async def d2_ffs(self, ctx):
-        """Sends an embed with the Destiny 2 Forsaken parody.
-        Syntax:      -d2_ffs [User]
+        """Sends an image with a Destiny 2 Forsaken parody.
+        Syntax:      -d2_ffs [User], -ffs [User]
         Parameters:  [User] (optional): Will send the image in a private conversation. If not specified, will send
                                        it to the channel where the command has been invoked.
         Permissions: None
