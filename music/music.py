@@ -338,7 +338,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @commands.command(name='play', aliases=['p'])
     async def play(self, ctx, *, query: t.Optional[str]):
-        """Searches for a song, takes the best match and starts playback.
+        """Searches for a song and takes the best match.
         Syntax:      -play [query], -p [query]
         Parameters:  [query]: String to search for.
         Permissions: None
@@ -376,7 +376,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @commands.command(name='search', aliases=['s'])
     async def search(self, ctx, *, query: t.Optional[str]):
-        """Searches for a song, gives five options to choose and starts playback.
+        """Searches for a song and gives five options to choose.
         Syntax:      -search [query], -s [query]
         Parameters:  [query]: String to search for.
         Permissions: None
@@ -622,7 +622,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @commands.command(name='now_playing', aliases=['np', 'now'])
     async def now_playing(self, ctx):
-        """Show a prompt that display the currently playing song.
+        """Show a prompt that displays the currently playing song.
         Syntax:      -now_playing, -np, -now
         Parameters:  None
         Permissions: None
