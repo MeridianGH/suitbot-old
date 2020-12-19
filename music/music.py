@@ -746,7 +746,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         track = player.queue._queue[position].title
         player.queue.remove(position)
 
-        await ctx.send(f'Removed track `{track}` from the queue.')
+        await ctx.send(f'Removed track `{track}` from the queue.', delete_after=10)
         send_log(f'[ Info ] Removed track \'{track}\' from the queue in guild \'{ctx.guild.name}\'.')
 
 
