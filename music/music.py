@@ -100,6 +100,9 @@ class Queue:
     def add(self, *args):
         self._queue.extend(args)
 
+    def remove(self, index):
+        self._queue.pop(index)
+
     def get_next_track(self):
         if not self._queue:
             raise QueueIsEmpty
@@ -169,7 +172,7 @@ class Player(wavelink.Player):
             send_log(f'[ Info ] Added a playlist to the queue in guild \'{ctx.guild.name}\'.')
         else:
             self.queue.add(tracks[0])
-            await ctx.send(f'Added {tracks[0].title} to the queue.', delete_after=10)
+            await ctx.send(f'Added `{tracks[0].title}` to the queue.', delete_after=10)
             send_log(f'[ Info ] Added track {tracks[0].title} to the queue in guild \'{ctx.guild.name}\'.')
 
         if not self.is_playing and not self.queue.is_empty:
@@ -185,12 +188,12 @@ class Player(wavelink.Player):
             send_log(f'[ Info ] Added a playlist to the queue in guild \'{ctx.guild.name}\'.')
         elif len(tracks) == 1:
             self.queue.add(tracks[0])
-            await ctx.send(f'Added {tracks[0].title} to the queue.', delete_after=10)
+            await ctx.send(f'Added `{tracks[0].title}` to the queue.', delete_after=10)
             send_log(f'[ Info ] Added track {tracks[0].title} to the queue in guild \'{ctx.guild.name}\'.')
         else:
             if (track := await self.choose_track(ctx, tracks)) is not None:
                 self.queue.add(track)
-                await ctx.send(f'Added {track.title} to the queue.', delete_after=10)
+                await ctx.send(f'Added `{track.title}` to the queue.', delete_after=10)
                 send_log(f'[ Info ] Added track {track.title} to the queue in guild \'{ctx.guild.name}\'.')
 
         if not self.is_playing and not self.queue.is_empty:
@@ -266,6 +269,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await payload.player.repeat_track()
         else:
             await payload.player.advance()
+        if not payload.player.is_playing and not payload.player.queue.upcoming:
+            await payload.player.teardown()
 
     async def cog_check(self, ctx):
         if isinstance(ctx.channel, discord.DMChannel):
@@ -592,7 +597,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         )
 
         if player.queue.upcoming:
-            queue = '\n'.join(t.title for t in player.queue.upcoming[:show])
+            queue = '\n'.join(f'{player.queue._queue.index(t)}: ' + t.title for t in player.queue.upcoming[:show])
 
             if len(queue) >= 5500:
                 embed = discord.Embed(title='Can\'t show this many entries, please use a limit:',
@@ -689,7 +694,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         sec = (int(h) * 3600 + int(m) * 60 + int(s)) * 1000
 
         await player.seek(sec)
-        await ctx.send(f'Set the position to **{h}:{m}:{s}**.', delete_after=10)
+        await ctx.send(f'Set the position to `{h}:{m}:{s}`.', delete_after=10)
         send_log(f'[ Info ] Set the position to {h}:{m}:{s} in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='volume', aliases=['vol', 'v'])
@@ -714,7 +719,35 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         await player.set_volume(volume)
         await ctx.send(f'Volume set to **{volume}**%!', delete_after=10)
-        send_log(f'[ Info ] Set the volume to {volume}% in guild \'{ctx.guild.name}\'.')
+        send_log(f'[ Info ] Set the volume to `{volume}%` in guild \'{ctx.guild.name}\'.')
+
+    @commands.command(name='remove')
+    async def remove(self, ctx, *, position: int):
+        """Remove a specified track from the queue. Check with -queue which track number to remove.
+        Syntax:      -remove [position]
+        Parameters:  [position]: The index of the track to remove.
+        Permissions: None
+        """
+        try:
+            await ctx.message.delete()
+        except discord.HTTPException:
+            pass
+
+        player = self.get_player(ctx)
+
+        if not player.is_connected:
+            raise modules.error_classes.NotConnected
+        if player.queue.is_empty:
+            raise QueueIsEmpty
+        if position <= 0:
+            await ctx.send(f'Please specify a valid position. Type `-queue` and look at the positions of the tracks.')
+            return
+
+        track = player.queue._queue[position].title
+        player.queue.remove(position)
+
+        await ctx.send(f'Removed track `{track}` from the queue.')
+        send_log(f'[ Info ] Removed track \'{track}\' from the queue in guild \'{ctx.guild.name}\'.')
 
 
 def setup(bot):
