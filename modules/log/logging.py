@@ -20,7 +20,7 @@ def send_log(string, time=True, prnt=True):
     else:
         time = ''
 
-    with open(f'{get_log_path()}/log.txt', 'a') as log:
+    with open(f'{get_log_path()}/{log_name}', 'a') as log:
         log.write(f'{time}{string}\n')
 
     if prnt:
@@ -30,9 +30,8 @@ def send_log(string, time=True, prnt=True):
 
 
 def log_traceback(traceback, command):
-    time = get_time()
-    clean_time = time.replace(':', '_')
-    file_name = f'traceback_{clean_time}.txt'
+    time = get_time().replace(':', '_')
+    file_name = f'traceback_{time}.txt'
     with open(f'{get_log_path()}/tracebacks/{file_name}', 'a') as log:
         for line in traceback:
             log.write(line)
@@ -43,4 +42,5 @@ def get_time():
     return datetime.now().strftime('%H:%M:%S')
 
 
-open(f'{get_log_path()}/log.txt', 'w').close()
+log_name = 'log_' + datetime.now().strftime('%d_%m_%y') + '.txt'
+open(f'{get_log_path()}/{log_name}', 'w').close()
