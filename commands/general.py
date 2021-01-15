@@ -102,7 +102,7 @@ class General(commands.Cog):
             pass
         embed = discord.Embed(color=0xff0000)
         embed.add_field(name='GitHub:', value='[github.com/MeridianPY/suitbot](https://github.com/MeridianPY/suitbot)')
-        await ctx.send(embed=embed, delete_after=10)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

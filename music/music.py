@@ -168,11 +168,11 @@ class Player(wavelink.Player):
 
         if isinstance(tracks, wavelink.TrackPlaylist):
             self.queue.add(*tracks.tracks)
-            await ctx.send(f'Added a playlist to the queue.', delete_after=10)
+            await ctx.send(f'Added a playlist to the queue.')
             send_log(f'[ Info ] Added a playlist to the queue in guild \'{ctx.guild.name}\'.')
         else:
             self.queue.add(tracks[0])
-            await ctx.send(f'Added `{tracks[0].title}` to the queue.', delete_after=10)
+            await ctx.send(f'Added `{tracks[0].title}` to the queue.')
             send_log(f'[ Info ] Added track {tracks[0].title} to the queue in guild \'{ctx.guild.name}\'.')
 
         if not self.is_playing and not self.queue.is_empty:
@@ -184,16 +184,16 @@ class Player(wavelink.Player):
 
         if isinstance(tracks, wavelink.TrackPlaylist):
             self.queue.add(*tracks.tracks)
-            await ctx.send(f'Added a playlist to the queue.', delete_after=10)
+            await ctx.send(f'Added a playlist to the queue.')
             send_log(f'[ Info ] Added a playlist to the queue in guild \'{ctx.guild.name}\'.')
         elif len(tracks) == 1:
             self.queue.add(tracks[0])
-            await ctx.send(f'Added `{tracks[0].title}` to the queue.', delete_after=10)
+            await ctx.send(f'Added `{tracks[0].title}` to the queue.')
             send_log(f'[ Info ] Added track {tracks[0].title} to the queue in guild \'{ctx.guild.name}\'.')
         else:
             if (track := await self.choose_track(ctx, tracks)) is not None:
                 self.queue.add(track)
-                await ctx.send(f'Added `{track.title}` to the queue.', delete_after=10)
+                await ctx.send(f'Added `{track.title}` to the queue.')
                 send_log(f'[ Info ] Added track {track.title} to the queue in guild \'{ctx.guild.name}\'.')
 
         if not self.is_playing and not self.queue.is_empty:
@@ -220,7 +220,7 @@ class Player(wavelink.Player):
         embed.set_author(name='Query Results:')
         embed.set_footer(text=f'Invoked by {ctx.author.display_name}', icon_url=ctx.author.avatar_url)
 
-        msg = await ctx.send(embed=embed, delete_after=10)
+        msg = await ctx.send(embed=embed)
         for emoji in list(OPTIONS.keys())[:min(len(tracks), len(OPTIONS))]:
             await msg.add_reaction(emoji)
 
@@ -274,7 +274,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     async def cog_check(self, ctx):
         if isinstance(ctx.channel, discord.DMChannel):
-            await ctx.send('Music commands are not available in DMs.', delete_after=10)
+            await ctx.send('Music commands are not available in DMs.')
             return False
 
         return True
@@ -316,15 +316,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         player = self.get_player(ctx)
         channel = await player.connect(ctx, channel)
-        await ctx.send(f'Connected to `{channel.name}`.', delete_after=10)
+        await ctx.send(f'Connected to `{channel.name}`.')
         send_log(f'[ Info ] Connected to channel {channel.name} in guild \'{ctx.guild.name}\'.')
 
     @join.error
     async def join_error(self, ctx, exc):
         if isinstance(exc, AlreadyConnectedToChannel):
-            await ctx.send('Already connected to a voice channel.', delete_after=10)
+            await ctx.send('Already connected to a voice channel.')
         elif isinstance(exc, NoVoiceChannel):
-            await ctx.send('No suitable voice channel was provided.', delete_after=10)
+            await ctx.send('No suitable voice channel was provided.')
 
     @commands.command(name='leave', aliases=['disconnect'])
     async def leave(self, ctx):
@@ -340,7 +340,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         player = self.get_player(ctx)
         await player.teardown()
-        await ctx.send('Disconnected.', delete_after=10)
+        await ctx.send('Disconnected.')
         send_log(f'[ Info ] Disconnected from channel in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='play', aliases=['p'])
@@ -365,7 +365,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 raise QueueIsEmpty
 
             await player.set_pause(False)
-            await ctx.send('Playback resumed.', delete_after=10)
+            await ctx.send('Playback resumed.')
 
         else:
             query = query.strip('<>')
@@ -377,9 +377,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @play.error
     async def play_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send('No songs to play as the queue is empty.', delete_after=10)
+            await ctx.send('No songs to play as the queue is empty.')
         elif isinstance(exc, NoVoiceChannel):
-            await ctx.send('No suitable voice channel was provided.', delete_after=10)
+            await ctx.send('No suitable voice channel was provided.')
 
     @commands.command(name='search', aliases=['s'])
     async def search(self, ctx, *, query: t.Optional[str]):
@@ -403,7 +403,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 raise QueueIsEmpty
 
             await player.set_pause(False)
-            await ctx.send('Playback resumed.', delete_after=10)
+            await ctx.send('Playback resumed.')
 
         else:
             query = query.strip('<>')
@@ -415,9 +415,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @search.error
     async def search_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send('No songs to play as the queue is empty.', delete_after=10)
+            await ctx.send('No songs to play as the queue is empty.')
         elif isinstance(exc, NoVoiceChannel):
-            await ctx.send('No suitable voice channel was provided.', delete_after=10)
+            await ctx.send('No suitable voice channel was provided.')
 
     @commands.command(name='pause')
     async def pause(self, ctx):
@@ -437,13 +437,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise PlayerIsAlreadyPaused
 
         await player.set_pause(True)
-        await ctx.send('Playback paused.', delete_after=10)
+        await ctx.send('Playback paused.')
         send_log(f'[ Info ] Paused playback in guild \'{ctx.guild.name}\'.')
 
     @pause.error
     async def pause_error(self, ctx, exc):
         if isinstance(exc, PlayerIsAlreadyPaused):
-            await ctx.send('Already paused.', delete_after=10)
+            await ctx.send('Already paused.')
 
     @commands.command(name='stop')
     async def stop(self, ctx):
@@ -461,7 +461,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player.queue.empty()
         await player.stop()
 
-        await ctx.send('Playback stopped.', delete_after=10)
+        await ctx.send('Playback stopped.')
         send_log(f'[ Info ] Stopped playback in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='skip', aliases=['next'])
@@ -482,15 +482,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise NoMoreTracks
 
         await player.stop()
-        await ctx.send('Playing next track in queue.', delete_after=10)
+        await ctx.send('Playing next track in queue.')
         send_log(f'[ Info ] Skipped track in guild \'{ctx.guild.name}\'.')
 
     @skip.error
     async def skip_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send('The queue is currently empty.', delete_after=10)
+            await ctx.send('The queue is currently empty.')
         elif isinstance(exc, NoMoreTracks):
-            await ctx.send('There are no more tracks in the queue.', delete_after=10)
+            await ctx.send('There are no more tracks in the queue.')
 
     @commands.command(name='previous', aliases=['prev'])
     async def previous(self, ctx):
@@ -512,15 +512,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player.queue.position -= 2
         await player.stop()
 
-        await ctx.send('Playing previous track in queue.', delete_after=10)
+        await ctx.send('Playing previous track in queue.')
         send_log(f'[ Info ] Skipped to previous in guild \'{ctx.guild.name}\'.')
 
     @previous.error
     async def previous_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send('The queue is currently empty.', delete_after=10)
+            await ctx.send('The queue is currently empty.')
         elif isinstance(exc, NoPreviousTracks):
-            await ctx.send('There are no previous tracks in the queue.', delete_after=10)
+            await ctx.send('There are no previous tracks in the queue.')
 
     @commands.command(name='shuffle')
     async def shuffle(self, ctx):
@@ -537,13 +537,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player = self.get_player(ctx)
         player.queue.shuffle()
 
-        await ctx.send('Queue shuffled.', delete_after=10)
+        await ctx.send('Queue shuffled.')
         send_log(f'[ Info ] Shuffled queue in guild \'{ctx.guild.name}\'.')
 
     @shuffle.error
     async def shuffle_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send('The queue could not be shuffled as it is currently empty.', delete_after=10)
+            await ctx.send('The queue could not be shuffled as it is currently empty.')
 
     @commands.command(name='repeat', aliases=['loop'])
     async def repeat(self, ctx, mode: str):
@@ -563,7 +563,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player = self.get_player(ctx)
         player.queue.set_repeat_mode(mode)
 
-        await ctx.send(f'The repeat mode has been set to {mode}.', delete_after=10)
+        await ctx.send(f'The repeat mode has been set to {mode}.')
         send_log(f'[ Info ] Set repeat mode ({mode}) in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='queue', aliases=['list', 'q'])
@@ -619,13 +619,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                         inline=False
                     )
 
-        await ctx.send(embed=embed, delete_after=10)
+        await ctx.send(embed=embed)
         send_log(f'[ Info ] Sent queue in guild \'{ctx.guild.name}\'.')
 
     @queue.error
     async def queue_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send('The queue is currently empty.', delete_after=10)
+            await ctx.send('The queue is currently empty.')
 
     @commands.command(name='now_playing', aliases=['np', 'now'])
     async def now_playing(self, ctx):
@@ -661,7 +661,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                       time.strftime('%H:%M:%S', time.gmtime(player.queue.current_track.length / 1000))
             )
 
-        await ctx.send(embed=embed, delete_after=10)
+        await ctx.send(embed=embed)
         send_log(f'[ Info ] Sent now_playing in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='seek')
@@ -694,7 +694,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         sec = (int(h) * 3600 + int(m) * 60 + int(s)) * 1000
 
         await player.seek(sec)
-        await ctx.send(f'Set the position to `{h}:{m}:{s}`.', delete_after=10)
+        await ctx.send(f'Set the position to `{h}:{m}:{s}`.')
         send_log(f'[ Info ] Set the position to {h}:{m}:{s} in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='volume', aliases=['vol', 'v'])
@@ -715,10 +715,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise modules.error_classes.NotConnected
 
         if not 0 <= volume <= 100:
-            return await ctx.send('Please enter a value between 0 and 100.', delete_after=10)
+            return await ctx.send('Please enter a value between 0 and 100.')
 
         await player.set_volume(volume)
-        await ctx.send(f'Volume set to **{volume}**%!', delete_after=10)
+        await ctx.send(f'Volume set to **{volume}**%!')
         send_log(f'[ Info ] Set the volume to `{volume}%` in guild \'{ctx.guild.name}\'.')
 
     @commands.command(name='remove')
@@ -746,7 +746,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         track = player.queue._queue[position].title
         player.queue.remove(position)
 
-        await ctx.send(f'Removed track `{track}` from the queue.', delete_after=10)
+        await ctx.send(f'Removed track `{track}` from the queue.')
         send_log(f'[ Info ] Removed track \'{track}\' from the queue in guild \'{ctx.guild.name}\'.')
 
 
