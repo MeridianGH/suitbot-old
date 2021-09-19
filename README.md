@@ -1,3 +1,7 @@
+# ARCHIVED
+This repository hasn't been developed in a really long while and is heavily deprecated.\
+A newer, alternative JavaScript version of this bot is available [here](https://github.com/MeridianGH/suitbot).
+
 # SuitBot
 
 ![Last commit](https://img.shields.io/github/last-commit/meridianpy/suitbot.svg?color=green&label=Last%20commit) &nbsp;
