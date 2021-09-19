@@ -1,5 +1,5 @@
 # ARCHIVED
-This repository hasn't been developed in a really long while and is heavily deprecated.\
+This repository hasn't been updated in a really long while and is heavily deprecated.\
 A newer, alternative JavaScript version of this bot is available [here](https://github.com/MeridianGH/suitbot).
 
 # SuitBot
